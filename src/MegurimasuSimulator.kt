@@ -2,12 +2,11 @@ class MegurimasuSimulator(agentInitPos: Map<String, Array<Int>>, val scoreData: 
     val agents = agentInit(agentInitPos)
     var encampmentData = arrayOf<Array<Int>>()
 
-    class Agent(argX: Int, argY: Int) {
+    inner class Agent(argX: Int, argY: Int) {
         var x = argX
         var y = argY
 
         fun move(type: Int): Boolean {
-
             return false
         }
 
