@@ -12,8 +12,8 @@ class MegurimasuSimulator(agentInitPos: Map<String, Array<Int>>, val scoreData: 
         fun canMove(type: Int): Boolean {
             if(type !in 0..18) return false
 
-            val xCopy = x + MovementValues.values[type]!!["x"]!!
-            val yCopy = y + MovementValues.values[type]!!["y"]!!
+            val xCopy = movedValue(type)["x"]!!
+            val yCopy = movedValue(type)["y"]!!
 
             if((xCopy < 0 || width < xCopy) || (yCopy < 0 || height < yCopy)) return false
 
@@ -22,6 +22,11 @@ class MegurimasuSimulator(agentInitPos: Map<String, Array<Int>>, val scoreData: 
 
             return true
         }
+
+        fun movedValue(type: Int): Map<String, Int> = mapOf(
+                "x" to x + MovementValues.values[type]!!["x"]!!,
+                "y" to y + MovementValues.values[type]!!["y"]!!
+        )
     }
 
     init{

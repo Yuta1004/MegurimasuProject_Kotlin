@@ -52,6 +52,9 @@
 	- 更新失敗時はfalseを返す
 - canMove(type: Int): Boolean
 	- moveと基本仕様は同じだが，大きな違いとしてメンバ変数(座標)を更新しない
+- movedValue(type: Int): Map<String, Int>
+	- 引数type通りに移動した時のx,yを返す
+	- メンバ変数の更新は行わない
 
 # 移動量クラス(MovementValues)
 *エージェントを移動させるために必要な移動量を保持する*  
