@@ -21,10 +21,9 @@ class MegurimasuSimulator(agentInitPos: Map<String, Array<Int>>, val scoreData: 
             val xCopy = movedValue(type)["x"]!!
             val yCopy = movedValue(type)["y"]!!
 
-            if((xCopy < 0 || width < xCopy) || (yCopy < 0 || height < yCopy)) return false
-
+            if((xCopy < 0 || width < xCopy) || (yCopy < 0 || height < yCopy)){ return false }
             val encampmant = encampmentData[yCopy][xCopy]
-            if(encampmant != getTeamID(agentName) && encampmant != 0) return false
+            if(encampmant != getTeamID(agentName) && encampmant != 0){ return false }
 
             return true
         }
@@ -36,9 +35,8 @@ class MegurimasuSimulator(agentInitPos: Map<String, Array<Int>>, val scoreData: 
     }
 
     init{
+        // 盤面初期化
         encampmentData = Array(scoreData.size) { _ -> Array(scoreData[0].size) {0}}
-
-        // 初期位置を盤面に反映
         agents.forEach { key, pos ->
             encampmentData[pos.y][pos.x] = getTeamID(key)
         }
@@ -46,7 +44,6 @@ class MegurimasuSimulator(agentInitPos: Map<String, Array<Int>>, val scoreData: 
 
     private fun agentInit(agentInitPos: Map<String, Array<Int>>): Map<String, Agent>{
         val agents = mutableMapOf<String, Agent>()
-
         agentInitPos.forEach { key, pos ->
             agents[key] = Agent(key, pos[0], pos[1])
         }
@@ -78,12 +75,12 @@ class MegurimasuSimulator(agentInitPos: Map<String, Array<Int>>, val scoreData: 
 class MovementValues{
     companion object {
         val values = mapOf(
-                0 to mapOf("x" to 0, "y" to 0),
-                1 to mapOf("x" to 0, "y" to -1),
-                2 to mapOf("x" to 1, "y" to -1),
-                3 to mapOf("x" to 1, "y" to 0),
-                4 to mapOf("x" to 1, "y" to 1),
-                5 to mapOf("x" to 0, "y" to 1),
+                0 to mapOf("x" to 0,  "y" to 0),
+                1 to mapOf("x" to 0,  "y" to -1),
+                2 to mapOf("x" to 1,  "y" to -1),
+                3 to mapOf("x" to 1,  "y" to 0),
+                4 to mapOf("x" to 1,  "y" to 1),
+                5 to mapOf("x" to 0,  "y" to 1),
                 6 to mapOf("x" to -1, "y" to 1),
                 7 to mapOf("x" to -1, "y" to 0),
                 8 to mapOf("x" to -1, "y" to -1)
