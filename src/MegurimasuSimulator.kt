@@ -6,7 +6,13 @@ class MegurimasuSimulator(agentInitPos: Map<String, Array<Int>>, val scoreData: 
 
     inner class Agent(private val agentName: String, var x: Int, var y: Int) {
         fun move(type: Int): Boolean {
-            return false
+            if(!canMove(type)) return false
+
+            val movedValues = movedValue(type)
+            x = movedValues["x"]!!
+            y = movedValues["y"]!!
+
+            return true
         }
 
         fun canMove(type: Int): Boolean {
