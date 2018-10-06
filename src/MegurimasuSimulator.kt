@@ -17,11 +17,30 @@ class MegurimasuSimulator(agentInitPos: Map<String, Array<Int>>, val scoreData: 
     }
 
     init{
-        
+        encampmentData = Array(scoreData.size) { _ -> Array(scoreData[0].size) {0}}
+
+        // 初期位置を盤面に反映
+        agents.forEach { key, pos ->
+            encampmentData[pos.y][pos.x] = getTeamID(key)
+        }
     }
 
     private fun agentInit(agentInitPos: Map<String, Array<Int>>): Map<String, Agent>{
-        return mapOf("A_1" to Agent(0, 0))
+        val agents = mutableMapOf<String, Agent>()
+
+        agentInitPos.forEach { key, pos ->
+            agents.put(key, Agent(pos[0], pos[1]))
+        }
+
+        return agents.toMap()
+    }
+
+    private fun getTeamID(agentName: String): Int{
+        return when(agentName){
+            "A_1", "A_2" -> 1
+            "B_1", "B_2" -> 2
+            else -> 0
+        }
     }
 
     fun move(behavior: Map<String, Int>): Boolean{
