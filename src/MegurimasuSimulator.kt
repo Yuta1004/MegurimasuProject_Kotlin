@@ -1,18 +1,26 @@
 class MegurimasuSimulator(agentInitPos: Map<String, Array<Int>>, val scoreData: Array<Array<Int>>){
+    val width = scoreData[0].size
+    val height = scoreData.size
     val agents = agentInit(agentInitPos)
     var encampmentData = arrayOf<Array<Int>>()
 
-    inner class Agent(argX: Int, argY: Int) {
-        var x = argX
-        var y = argY
-
+    inner class Agent(private val agentName: String, var x: Int, var y: Int) {
         fun move(type: Int): Boolean {
             return false
         }
 
         fun canMove(type: Int): Boolean {
+            if(type !in 0..18) return false
 
-            return false
+            val xCopy = x + MovementValues.values[type]!!["x"]!!
+            val yCopy = y + MovementValues.values[type]!!["y"]!!
+
+            if((xCopy < 0 || width < xCopy) || (yCopy < 0 || height < yCopy)) return false
+
+            val encampmant = encampmentData[yCopy][xCopy]
+            if(encampmant != getTeamID(agentName) && encampmant != 0) return false
+
+            return true
         }
     }
 
@@ -29,7 +37,7 @@ class MegurimasuSimulator(agentInitPos: Map<String, Array<Int>>, val scoreData: 
         val agents = mutableMapOf<String, Agent>()
 
         agentInitPos.forEach { key, pos ->
-            agents.put(key, Agent(pos[0], pos[1]))
+            agents[key] = Agent(key, pos[0], pos[1])
         }
 
         return agents.toMap()

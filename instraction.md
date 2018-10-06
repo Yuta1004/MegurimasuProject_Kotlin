@@ -6,6 +6,7 @@
 # 巡りマスシミュレータ本体(MegurimasuSimulator)
 
 ## メンバ変数
+- **[val]** width, height: Int → フィールドのサイズ
 - **[val]** agents: Map<String, Agent> → エージェントクラス保持
 - **[val]** scoreData: Array → フィールドのスコアデータ保持
 - **[var]** encampmentData: Array → フィールドの陣地データ保持
@@ -36,12 +37,14 @@
 *シミュレータ本体のプロパティへアクセスを行う*
 
 ## メンバ変数
+- agentName: String → エージェントの名前(ID)
 - x: Int → エージェントの座標x
 - y: Int → エージェントの座標y
 
 ## コンストラクタ
-- argX: Int → エージェントの座標x
-- argY: Int → エージェントの座標y
+- agentName: String → エージェントの名前 (ID)
+- x: Int → エージェントの座標x
+- y: Int → エージェントの座標y
 
 ## メソッド
 - move(type: Int): Boolean
