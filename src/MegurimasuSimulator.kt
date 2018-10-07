@@ -28,10 +28,15 @@ class MegurimasuSimulator(agentInitPos: Map<String, Array<Int>>, val scoreData: 
             return true
         }
 
-        fun takeActionPos(type: Int): Map<String, Int> = mapOf(
-                "x" to x + MovementValues.values[type]!!["x"]!!,
-                "y" to y + MovementValues.values[type]!!["y"]!!
-        )
+        fun takeActionPos(type: Int): Map<String, Int>{
+            if(type !in 0..8 && type !in 10..18){ return mapOf("x" to 0, "y" to 0) }
+            if(!canAction(type)){ return mapOf("x" to x, "y" to y)}
+
+            return mapOf(
+                    "x" to x + MovementValues.values[type%10]!!["x"]!!,
+                    "y" to y + MovementValues.values[type%10]!!["y"]!!
+            )
+        }
     }
 
     init{
