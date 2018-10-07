@@ -16,7 +16,7 @@ class MegurimasuSimulator(agentInitPos: Map<String, Array<Int>>, val scoreData: 
         }
 
         fun canAction(type: Int): Boolean {
-            if(type !in 0..18) return false
+            if(type !in 0..8 && type !in 10..18) return false
 
             val xCopy = takeActionPos(type)["x"]!!
             val yCopy = takeActionPos(type)["y"]!!
