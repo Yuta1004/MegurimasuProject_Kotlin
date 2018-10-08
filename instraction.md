@@ -6,8 +6,8 @@
 # 巡りマスシミュレータ本体(MegurimasuSimulator)
 
 ## メンバ変数
-- **[val private]** width, height: Int → フィールドのサイズ
-- **[val private]** agents: Map<String, Agent> → エージェントクラス保持
+- **[var private]** width, height: Int → フィールドのサイズ
+- **[var private]** agents: Map<String, Agent> → エージェントクラス保持
 - **[var]** scoreData: Array → フィールドのスコアデータ保持
 - **[var]** encampmentData: Array → フィールドの陣地データ保持
 
@@ -41,6 +41,9 @@
 - conversion(): String
 	- 盤面情報を文字列にして返す
 	- DataConversionクラスのconversionを呼ぶ
+- deconversion(target: String)
+	- 文字列にされた譜面情報を復元する
+	- メンバ変数を更新する
 
 
 # エージェントクラス(Agent)

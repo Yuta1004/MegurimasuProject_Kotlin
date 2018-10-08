@@ -1,9 +1,10 @@
+import javax.xml.crypto.Data
 import kotlin.math.abs
 
 class MegurimasuSimulator(agentInitPos: Map<String, Array<Int>>, var scoreData: Array<Array<Int>>){
-    private val width = scoreData[0].size
-    private val height = scoreData.size
-    private val agents = agentInit(agentInitPos)
+    private var width = scoreData[0].size
+    private var height = scoreData.size
+    private var agents = agentInit(agentInitPos)
     var encampmentData = arrayOf<Array<Int>>()
 
     inner class Agent(private val agentName: String, var x: Int, var y: Int) {
@@ -186,6 +187,17 @@ class MegurimasuSimulator(agentInitPos: Map<String, Array<Int>>, var scoreData: 
 
     fun conversion(): String{
         return DataConversion.conversion(scoreData, encampmentData, agents)
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    fun deconversion(target: String){
+        val stageData = DataConversion.deconversion(target)
+
+        width = stageData["width"] as Int
+        height = stageData["height"] as Int
+        scoreData = stageData["scoreData"] as Array<Array<Int>>
+        encampmentData = stageData["encampmentData"] as Array<Array<Int>>
+        agents = agentInit(stageData["agentPos"] as Map<String, Array<Int>>)
     }
 }
 
