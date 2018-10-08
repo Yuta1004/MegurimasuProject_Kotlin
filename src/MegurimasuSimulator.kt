@@ -5,7 +5,7 @@ class MegurimasuSimulator(agentInitPos: Map<String, Array<Int>>, val scoreData: 
     var encampmentData = arrayOf<Array<Int>>()
 
     inner class Agent(private val agentName: String, var x: Int, var y: Int) {
-        fun move(type: Int): Boolean {
+        fun action(type: Int): Boolean {
             if(!canAction(type)) return false
 
             val movedValues = takeActionPos(type)
@@ -64,7 +64,7 @@ class MegurimasuSimulator(agentInitPos: Map<String, Array<Int>>, val scoreData: 
         }
     }
 
-    fun move(behavior: Map<String, Int>){
+    fun action(behavior: Map<String, Int>){
         // 行動後の座標を取得する
         val takeActionPositions = mutableMapOf<String, Int>()
         behavior.forEach { agentName, type ->
@@ -88,11 +88,11 @@ class MegurimasuSimulator(agentInitPos: Map<String, Array<Int>>, val scoreData: 
                 return@forEach
             }
 
-            agents[agentName]!!.move(behavior[agentName]!!)
+            agents[agentName]!!.action(behavior[agentName]!!)
         }
     }
 
-    fun moveSimulation(behavior: Map<String, Int>): Boolean{
+    fun actionSimulation(behavior: Map<String, Int>): Boolean{
         return false
     }
 

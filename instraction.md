@@ -21,10 +21,10 @@
 - getTeamID(agentName: String): Int **[private]**
 	- エージェントIDに対応したチームIDを返す
 	- A -> 1, B -> 2
-- move(behavior: Map<String, Int>)
+- action(behavior: Map<String, Int>)
 	- 引数behaviorには4つのキーを含めること["A_1", "A_2", "B_1", "B_2"]
 	- それぞれのキーの値に基づいてエージェント・陣地情報を更新する
-- moveSimulation(behavior: Map<String, Int>): Map<Stringm, Any>
+- actionSimulation(behavior: Map<String, Int>): Map<Stringm, Any>
 	- moveと基本仕様は同じ．
 	- 引数behavior通りに行動を行った時のエージェントの座標や盤面情報，得点を返す
 	- moveと異なり，メンバ変数を更新しない(動きのシミュレーションを行う)
@@ -47,14 +47,15 @@
 - y: Int → エージェントの座標y
 
 ## メソッド
-- move(type: Int): Boolean
+- action(type: Int): Boolean
 	- 引数で指定された通りにメンバ変数(座標)を更新
 	- 更新失敗時はfalseを返す
-- canMove(type: Int): Boolean
-	- moveと基本仕様は同じだが，大きな違いとしてメンバ変数(座標)を更新しない
-- movedValue(type: Int): Map<String, Int>
-	- 引数type通りに移動した時のx,yを返す
-	- メンバ変数の更新は行わない
+- canAction(type: Int): Boolean
+	- 引数type通りに行動を起こそうとした時，それが成功するかどうかを返す
+	- 移動 → 移動先が場外でないか，相手のパネルでないか
+	- パネル除去 → 除去をする場所が場外でないか
+- takeActionPos(type: Int): Map<String, Int>
+	- 引数type通りに行動を起こした時の，その影響を受ける座標を返す
 
 # 移動量クラス(MovementValues)
 *エージェントを移動させるために必要な移動量を保持する*  
