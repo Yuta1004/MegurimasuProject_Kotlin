@@ -80,15 +80,15 @@ class MegurimasuSimulator(agentInitPos: Map<String, Array<Int>>, val scoreData: 
 class MovementValues{
     companion object {
         val values = mapOf(
-                1 to mapOf("x" to 0,  "y" to 0),
-                2 to mapOf("x" to 0,  "y" to -1),
-                3 to mapOf("x" to 1,  "y" to -1),
-                4 to mapOf("x" to 1,  "y" to 0),
-                5 to mapOf("x" to 1,  "y" to 1),
-                6 to mapOf("x" to 0,  "y" to 1),
-                7 to mapOf("x" to -1, "y" to 1),
-                8 to mapOf("x" to -1, "y" to 0),
-                0 to mapOf("x" to -1, "y" to -1)
+                8 to mapOf("x" to 0,  "y" to 0),
+                0 to mapOf("x" to 0,  "y" to -1),
+                1 to mapOf("x" to 1,  "y" to -1),
+                2 to mapOf("x" to 1,  "y" to 0),
+                3 to mapOf("x" to 1,  "y" to 1),
+                4 to mapOf("x" to 0,  "y" to 1),
+                5 to mapOf("x" to -1, "y" to 1),
+                6 to mapOf("x" to -1, "y" to 0),
+                7 to mapOf("x" to -1, "y" to -1)
         )
     }
 }
