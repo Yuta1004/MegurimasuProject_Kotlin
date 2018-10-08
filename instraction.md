@@ -38,6 +38,9 @@
 	- ある地点から広がれる範囲へ次々に探索を行う
 - isWithInRange(x: Int, y: Int): Boolean **[private]**
 	- 引数x,yが正常な値かどうか(場外にはみ出ていないか)検査して結果をBoolで返す
+- conversion(): String
+	- 盤面情報を文字列にして返す
+	- DataConversionクラスのconversionを呼ぶ
 
 
 # エージェントクラス(Agent)
@@ -64,6 +67,24 @@
 	- パネル除去 → 除去をする場所が場外でないか
 - takeActionPos(type: Int): Map<String, Int>
 	- 引数type通りに行動を起こした時の，その影響を受ける座標を返す
+
+# データ変換クラス(DataComversion)
+陣地データやスコアデータ，エージェント位置などを文字列に
+文字列データから陣地データやスコアデータなどに変換するクラス
+
+## コンストラクタ
+なし
+
+## メンバ変数
+なし
+
+## メソッド
+全てstaticなメソッド
+- comversion(scoreData: Array<Array<Int>>, encampmentData: Array<Array<Int>>, agents: Map<String, MegurimasuSimulator.Agent>): String
+    - 与えられたデータを文字列にして返す
+- decomversion(target: String)
+    - 与えられた文字列を盤面情報にして返す
+
 
 # 移動量クラス(MovementValues)
 *エージェントを移動させるために必要な移動量を保持する*  

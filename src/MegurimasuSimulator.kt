@@ -183,6 +183,10 @@ class MegurimasuSimulator(agentInitPos: Map<String, Array<Int>>, var scoreData: 
     private fun isWithInRange(x: Int, y: Int): Boolean{
         return (x in 0..(width - 1)) && (y in 0..(height-1))
     }
+
+    fun conversion(): String{
+        return DataConversion.conversion(scoreData, encampmentData, agents)
+    }
 }
 
 class MovementValues{
