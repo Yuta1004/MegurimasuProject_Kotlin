@@ -31,7 +31,8 @@ class DataConversion {
             return conversionStr
         }
 
-        fun deconversion(target: String) {
+        @Suppress("UNCHECKED_CAST")
+        fun deconversion(target: String): Map<String, Any>{
             val splitTarget = target.split(":")
 
             // ステージ情報(幅，高さ)
@@ -40,22 +41,22 @@ class DataConversion {
 
             // スコアデータ
             // 32進数の文字それぞれを10進数に直して16を引く
-            val scoreData = Array(height) { _ -> arrayListOf<Int>()}
+            val scoreData = Array(height) { _ -> Array(width){0}}
             for(i in 0 until height){
-                splitTarget[i+2].forEach { char ->
-                    scoreData[i].add(numAtoB(char.toString(), 36, 10) - 16)
+                splitTarget[i+2].forEachIndexed { index, char ->
+                    scoreData[i][index] = numAtoB(char.toString(), 36, 10) - 16
                 }
             }
 
             // 陣地データ
             // 36進数を2進数に変換した後，2個ずつ数字を連結してそれを10進数に直す
-            val encampmentData = Array(height) { _ -> arrayListOf<Int>()}
+            val encampmentData = Array(height) { _ -> Array(width){0}}
             for(i in 0 until height){
                 var binStr = Integer.parseInt(splitTarget[i+2+height], 36).toString(2)
                 binStr = String.format("%"+(height*2)+"s", binStr).replace(" ", "0")
 
                 for(charIdx in 0 until width*2 step 2){
-                    encampmentData[i].add("${binStr[charIdx]}${binStr[charIdx+1]}".toInt(2))
+                    encampmentData[i][charIdx/2] = "${binStr[charIdx]}${binStr[charIdx+1]}".toInt(2)
                 }
             }
 
@@ -69,6 +70,14 @@ class DataConversion {
                 val agentY = numAtoB(agent[1].toString(), 36, 10)
                 agentPos[agentNames[i]] = arrayOf(agentX, agentY)
             }
+
+            return mapOf(
+                    "width" to width,
+                    "height" to height,
+                    "scoreData" to scoreData,
+                    "encampmentData" to encampmentData,
+                    "agentPos" to agentPos
+            )
         }
 
         private fun numAtoB(numStr: String, A: Int, B:Int): Int{
