@@ -22,8 +22,8 @@ class MegurimasuSimulator(agentInitPos: Map<String, Array<Int>>, val scoreData: 
             val yCopy = y + MovementValues.values[type%10]!!["y"]!!
 
             if((xCopy < 0 || width < xCopy) || (yCopy < 0 || height < yCopy)){ return false }
-            val encampmant = encampmentData[yCopy][xCopy]
-            if(encampmant != getTeamID(agentName) && encampmant != 0){ return false }
+            val encampment = encampmentData[yCopy][xCopy]
+            if(encampment != getTeamID(agentName) && encampment != 0){ return false }
 
             return true
         }
