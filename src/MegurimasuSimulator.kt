@@ -1,4 +1,3 @@
-import kotlin.concurrent.fixedRateTimer
 import kotlin.math.abs
 
 class MegurimasuSimulator(agentInitPos: Map<String, Array<Int>>, val scoreData: Array<Array<Int>>){
