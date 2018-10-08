@@ -67,12 +67,8 @@ class MegurimasuSimulator(agentInitPos: Map<String, Array<Int>>, val scoreData: 
     fun action(behavior: Map<String, Int>){
         // 行動後の座標を取得する
         val takeActionPositions = mutableMapOf<String, Int>()
-        behavior.forEach { agentName, type ->
-            if(!agents.containsKey(agentName)){ return@forEach }
-
-            val pos = agents[agentName]!!.takeActionPos(type)
-            val intPos = pos["x"]!!*10 + pos["y"]!!
-            takeActionPositions[agentName] = intPos
+        actionSimulation(behavior).forEach { agentName, pos ->
+            takeActionPositions[agentName] = pos["x"]!!*10 + pos["y"]!!
         }
 
         // 重複を記録する
@@ -92,8 +88,15 @@ class MegurimasuSimulator(agentInitPos: Map<String, Array<Int>>, val scoreData: 
         }
     }
 
-    fun actionSimulation(behavior: Map<String, Int>): Boolean{
-        return false
+    private fun actionSimulation(behavior: Map<String, Int>): Map<String, Map<String, Int>>{
+        val takeActionPositions = mutableMapOf<String, Map<String, Int>>()
+        behavior.forEach { agentName, type ->
+            if(!agents.containsKey(agentName)){ return@forEach }
+
+            takeActionPositions[agentName] = agents[agentName]!!.takeActionPos(type)
+        }
+
+        return takeActionPositions
     }
 
     fun calScore(): Map<String, Int>{
