@@ -8,9 +8,22 @@ class MegurimasuSimulator(agentInitPos: Map<String, Array<Int>>, val scoreData: 
         fun action(type: Int): Boolean {
             if(!canAction(type)) return false
 
-            val movedValues = takeActionPos(type)
-            x = movedValues["x"]!!
-            y = movedValues["y"]!!
+            when(type){
+                // 移動
+                in 0..7 ->{
+                    val movedValues = takeActionPos(type)
+                    x = movedValues["x"]!!
+                    y = movedValues["y"]!!
+                    encampmentData[y][x] = getTeamID(agentName)
+                }
+                // パネル除去
+                in 10..17 ->{
+                    val movedValues = takeActionPos(type)
+                    val panelX = movedValues["x"]!!
+                    val panelY = movedValues["y"]!!
+                    encampmentData[panelY][panelX] = 0
+                }
+            }
 
             return true
         }
