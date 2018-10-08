@@ -24,10 +24,13 @@
 - action(behavior: Map<String, Int>)
 	- 引数behaviorには4つのキーを含めること["A_1", "A_2", "B_1", "B_2"]
 	- それぞれのキーの値に基づいてエージェント・陣地情報を更新する
-- actionSimulation(behavior: Map<String, Int>): Map<Stringm, Any>
+- actionSimulation(behavior: Map<String, Int>): Map<Stringm, Any> **[private]**
 	- moveと基本仕様は同じ．
 	- 引数behavior通りに行動を行った時のエージェントの座標や盤面情報，得点を返す
 	- moveと異なり，メンバ変数を更新しない(動きのシミュレーションを行う)
+- duplicateDetection(target: Map<String, Int>): Map<String, Boolean> **[private]**
+  - 与えられたMapの値の重複をチェックする
+  - 重複がある値のキーをtrueにして返す
 - calScore(): Map<String, Int>
 	- 得点を計算してArrayで返す
 
