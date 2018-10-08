@@ -1,4 +1,3 @@
-import javax.xml.crypto.Data
 import kotlin.math.abs
 
 class MegurimasuSimulator(agentInitPos: Map<String, Array<Int>>, var scoreData: Array<Array<Int>>){
