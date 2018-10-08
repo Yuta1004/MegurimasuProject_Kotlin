@@ -120,11 +120,10 @@ class MegurimasuSimulator(agentInitPos: Map<String, Array<Int>>, val scoreData: 
         val score = mutableMapOf("A" to 0, "B" to 0)
 
         // パネルスコア
-        val flatScoreDara = scoreData.flatten()
+        val flatScoreDara = scoreData.flatten().toIntArray()
         score.forEach { key, _ ->
             val teamID = getTeamID(key)
             score[key] = flatScoreDara
-                    .asSequence()
                     .filterIndexed { idx, _ -> encampmentData[idx/height][idx%width] == teamID }
                     .sum()
         }
