@@ -104,7 +104,19 @@ class MegurimasuSimulator(agentInitPos: Map<String, Array<Int>>, val scoreData: 
     }
 
     fun calScore(): Map<String, Int>{
-        return mapOf("A" to 0, "B" to 0)
+        val score = mutableMapOf("A" to 0, "B" to 0)
+
+        // パネルスコア
+        val flatScoreDara = scoreData.flatten()
+        score.forEach { key, _ ->
+            val teamID = getTeamID(key)
+            score[key] = flatScoreDara
+                    .asSequence()
+                    .filterIndexed { idx, _ -> encampmentData[idx/height][idx%width] == teamID }
+                    .sum()
+        }
+
+        return score
     }
 }
 
