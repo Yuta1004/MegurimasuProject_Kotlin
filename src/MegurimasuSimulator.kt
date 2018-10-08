@@ -18,8 +18,8 @@ class MegurimasuSimulator(agentInitPos: Map<String, Array<Int>>, val scoreData: 
         fun canAction(type: Int): Boolean {
             if(type !in 0..8 && type !in 10..18) return false
 
-            val xCopy = takeActionPos(type)["x"]!!
-            val yCopy = takeActionPos(type)["y"]!!
+            val xCopy = x + MovementValues.values[type%10]!!["x"]!!
+            val yCopy = y + MovementValues.values[type%10]!!["y"]!!
 
             if((xCopy < 0 || width < xCopy) || (yCopy < 0 || height < yCopy)){ return false }
             val encampmant = encampmentData[yCopy][xCopy]
