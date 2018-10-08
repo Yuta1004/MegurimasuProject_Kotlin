@@ -73,13 +73,13 @@ class MegurimasuSimulator(agentInitPos: Map<String, Array<Int>>, val scoreData: 
 
         // 重複を記録する
         // 重複があればoverLapAgentsの値がtrueになる
-        val overLapAgents = mutableMapOf<String, Boolean>()
+        val duplicateAgents = mutableMapOf<String, Boolean>()
         takeActionPositions.forEach { agentName, value ->
-            overLapAgents[agentName] = takeActionPositions.count { it.value == value} >= 2
+            duplicateAgents[agentName] = takeActionPositions.count { it.value == value} >= 2
         }
 
         // 行動をとる座標が重複していないエージェントを動かす
-        overLapAgents.forEach { agentName, isOverLap ->
+        duplicateAgents.forEach { agentName, isOverLap ->
             if(isOverLap || !agents.containsKey(agentName) || !behavior.containsKey(agentName)) {
                 return@forEach
             }
