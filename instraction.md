@@ -33,6 +33,11 @@
   - 重複がある値のキーをtrueにして返す
 - calScore(): Map<String, Int>
 	- 得点を計算してArrayで返す
+- recursionSearch(x: Int, y: Int, teamID: Int, argFillEncampment: Array<Array<Int>>?): Array<Array<Int>> **[private]**
+	- 陣地スコア計算時に再帰探索を行う関数
+	- ある地点から広がれる範囲へ次々に探索を行う
+- isWithInRange(x: Int, y: Int): Boolean
+	- 引数x,yが正常な値かどうか(場外にはみ出ていないか)検査して結果をBoolで返す
 
 
 # エージェントクラス(Agent)

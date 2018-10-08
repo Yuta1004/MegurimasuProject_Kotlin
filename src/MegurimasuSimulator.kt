@@ -1,3 +1,6 @@
+import kotlin.concurrent.fixedRateTimer
+import kotlin.math.abs
+
 class MegurimasuSimulator(agentInitPos: Map<String, Array<Int>>, val scoreData: Array<Array<Int>>){
     val width = scoreData[0].size
     val height = scoreData.size
@@ -34,7 +37,7 @@ class MegurimasuSimulator(agentInitPos: Map<String, Array<Int>>, val scoreData: 
             val xCopy = x + MovementValues.values[type%10]!!["x"]!!
             val yCopy = y + MovementValues.values[type%10]!!["y"]!!
 
-            if((xCopy < 0 || width < xCopy) || (yCopy < 0 || height < yCopy)){ return false }
+            if((xCopy < 0 || width <= xCopy) || (yCopy < 0 || height <= yCopy)){ return false }
             val encampment = encampmentData[yCopy][xCopy]
             if(encampment != getTeamID(agentName) && encampment != 0){ return false }
 
@@ -118,9 +121,9 @@ class MegurimasuSimulator(agentInitPos: Map<String, Array<Int>>, val scoreData: 
 
     fun calScore(): Map<String, Int>{
         val score = mutableMapOf("A" to 0, "B" to 0)
+        var flatScoreDara = scoreData.flatten().toIntArray()
 
         // パネルスコア
-        val flatScoreDara = scoreData.flatten().toIntArray()
         score.forEach { key, _ ->
             val teamID = getTeamID(key)
             score[key] = flatScoreDara
@@ -128,7 +131,66 @@ class MegurimasuSimulator(agentInitPos: Map<String, Array<Int>>, val scoreData: 
                     .sum()
         }
 
+        // 陣地スコア
+        flatScoreDara = flatScoreDara.map { abs(it) }.toIntArray()
+        arrayOf("A", "B").forEach { teamIDStr ->
+            var fillEncampment: Array<Array<Int>>? = Array(height) { _ -> Array(width){0} }
+            val teamID = getTeamID(teamIDStr)
+
+            for(y in 1 until height-1){
+                for(x in 1 until width-1) {
+                    // 既に探索済みか自陣地であればスキップ
+                    if(fillEncampment!![y][x] == 1 || encampmentData[y][x] == teamID){
+                        continue
+                    }
+
+                    // 探索
+                    val copyFillEncampment = fillEncampment.map{ it.clone() }.toTypedArray()
+                    fillEncampment = recursionSearch(x, y, teamID, fillEncampment)
+
+                    // 探索結果がnullなら探索失敗，fillEncampmentを元に戻す
+                    fillEncampment = fillEncampment?: copyFillEncampment
+                }
+            }
+
+            // 探索結果をスコアに反映
+            val encScore = flatScoreDara
+                    .filterIndexed { idx, _ -> fillEncampment!![idx/height][idx%width] == 1 }
+                    .sum()
+            score[teamIDStr]!!.plus(encScore)
+        }
+
         return score
+    }
+
+    private fun recursionSearch(x: Int, y: Int, teamID: Int, argFillEncampment: Array<Array<Int>>?): Array<Array<Int>>?{
+        if(x == 0 || x == width-1 || y == 0 || y == height-1 || argFillEncampment == null){
+            return null
+        }
+
+        argFillEncampment[y][x] = 1
+
+        var fillEncampment = argFillEncampment
+        val moveXList = listOf(x, x, x-1, x+1)
+        val moveYList = listOf(y-1, y+1, y, y)
+
+        for(i in 0 until 4){
+            val _x = moveXList[i]
+            val _y = moveYList[i]
+
+            // 移動先がステージ内 and 探索先の場所が自分の陣地でない and すでに探索済みでなければ探索続行
+            if(isWithInRange(_x, _y) && encampmentData[_y][_x] != teamID && fillEncampment!![_y][_x] == 0){
+                fillEncampment = recursionSearch(_x, _y, teamID, fillEncampment)
+
+                if(fillEncampment == null){ return null }
+            }
+        }
+
+        return fillEncampment
+    }
+
+    private fun isWithInRange(x: Int, y: Int): Boolean{
+        return (x in 0..(width - 1)) && (y in 0..(height-1))
     }
 }
 
