@@ -53,7 +53,7 @@
 - action(type: Int): Boolean
 	- 引数で指定された通りにメンバ変数(座標)を更新
 	- 更新失敗時はfalseを返す
-- canAction(type: Int): Boolean
+- canAction(type: Int): Boolean **[private]**
 	- 引数type通りに行動を起こそうとした時，それが成功するかどうかを返す
 	- 移動 → 移動先が場外でないか，相手のパネルでないか
 	- パネル除去 → 除去をする場所が場外でないか
