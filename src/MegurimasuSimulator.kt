@@ -1,9 +1,9 @@
 import kotlin.math.abs
 
-class MegurimasuSimulator(agentInitPos: Map<String, Array<Int>>, val scoreData: Array<Array<Int>>){
-    val width = scoreData[0].size
-    val height = scoreData.size
-    val agents = agentInit(agentInitPos)
+class MegurimasuSimulator(agentInitPos: Map<String, Array<Int>>, var scoreData: Array<Array<Int>>){
+    private val width = scoreData[0].size
+    private val height = scoreData.size
+    private val agents = agentInit(agentInitPos)
     var encampmentData = arrayOf<Array<Int>>()
 
     inner class Agent(private val agentName: String, var x: Int, var y: Int) {
@@ -21,9 +21,7 @@ class MegurimasuSimulator(agentInitPos: Map<String, Array<Int>>, val scoreData: 
                 // パネル除去
                 in 10..17 ->{
                     val movedValues = takeActionPos(type)
-                    val panelX = movedValues["x"]!!
-                    val panelY = movedValues["y"]!!
-                    encampmentData[panelY][panelX] = 0
+                    encampmentData[movedValues["x"]!!][movedValues["y"]!!] = 0
                 }
             }
 
@@ -68,7 +66,7 @@ class MegurimasuSimulator(agentInitPos: Map<String, Array<Int>>, val scoreData: 
             agents[key] = Agent(key, pos[0], pos[1])
         }
 
-        return agents.toMap()
+        return agents
     }
 
     private fun getTeamID(agentName: String): Int{
@@ -86,16 +84,14 @@ class MegurimasuSimulator(agentInitPos: Map<String, Array<Int>>, val scoreData: 
             takeActionPositions[agentName] = pos["x"]!!*10 + pos["y"]!!
         }
 
-        // 重複検出
-        val duplicateAgents = duplicateDetection(takeActionPositions)
-
-        // エージェントを行動させる(条件を満たしたものだけ)
-        duplicateAgents.forEach { agentName, isDuplicate ->
-            if(isDuplicate || !agents.containsKey(agentName) || !behavior.containsKey(agentName)) {
-                return@forEach
-            }
-            agents[agentName]!!.action(behavior[agentName]!!)
-        }
+        // エージェントを行動させる(重複してないかつ条件を満たしたものだけ)
+        duplicateDetection(takeActionPositions)
+                .forEach { agentName, isDuplicate ->
+                    if(isDuplicate || !agents.containsKey(agentName) || !behavior.containsKey(agentName)) {
+                        return@forEach
+                    }
+                    agents[agentName]!!.action(behavior[agentName]!!)
+                }
     }
 
     private fun actionSimulation(behavior: Map<String, Int>): Map<String, Map<String, Int>>{
@@ -136,19 +132,14 @@ class MegurimasuSimulator(agentInitPos: Map<String, Array<Int>>, val scoreData: 
             var fillEncampment: Array<Array<Int>>? = Array(height) { _ -> Array(width){0} }
             val teamID = getTeamID(teamIDStr)
 
+            // 外周を除いた全ての座標を起点として陣地探索をする(再帰)
             for(y in 1 until height-1){
                 for(x in 1 until width-1) {
-                    // 既に探索済みか自陣地であればスキップ
-                    if(fillEncampment!![y][x] == 1 || encampmentData[y][x] == teamID){
-                        continue
-                    }
-
-                    // 探索
-                    val copyFillEncampment = fillEncampment.map{ it.clone() }.toTypedArray()
-                    fillEncampment = recursionSearch(x, y, teamID, fillEncampment)
+                    if(fillEncampment!![y][x] == 1 || encampmentData[y][x] == teamID){ continue }
 
                     // 探索結果がnullなら探索失敗，fillEncampmentを元に戻す
-                    fillEncampment = fillEncampment?: copyFillEncampment
+                    val copyFillEncampment = fillEncampment.map{ it.clone() }.toTypedArray()
+                    fillEncampment = recursionSearch(x, y, teamID, fillEncampment)?: copyFillEncampment
                 }
             }
 
@@ -167,6 +158,7 @@ class MegurimasuSimulator(agentInitPos: Map<String, Array<Int>>, val scoreData: 
             return null
         }
 
+        // 探索済みにする
         argFillEncampment[y][x] = 1
 
         var fillEncampment = argFillEncampment
@@ -178,9 +170,9 @@ class MegurimasuSimulator(agentInitPos: Map<String, Array<Int>>, val scoreData: 
             val _y = moveYList[i]
 
             // 移動先がステージ内 and 探索先の場所が自分の陣地でない and すでに探索済みでなければ探索続行
+            // nullが返ってきたらそのまま返す
             if(isWithInRange(_x, _y) && encampmentData[_y][_x] != teamID && fillEncampment!![_y][_x] == 0){
                 fillEncampment = recursionSearch(_x, _y, teamID, fillEncampment)
-
                 if(fillEncampment == null){ return null }
             }
         }

@@ -6,9 +6,9 @@
 # 巡りマスシミュレータ本体(MegurimasuSimulator)
 
 ## メンバ変数
-- **[val]** width, height: Int → フィールドのサイズ
-- **[val]** agents: Map<String, Agent> → エージェントクラス保持
-- **[val]** scoreData: Array → フィールドのスコアデータ保持
+- **[val private]** width, height: Int → フィールドのサイズ
+- **[val private]** agents: Map<String, Agent> → エージェントクラス保持
+- **[var]** scoreData: Array → フィールドのスコアデータ保持
 - **[var]** encampmentData: Array → フィールドの陣地データ保持
 
 ## コンストラクタ
@@ -36,7 +36,7 @@
 - recursionSearch(x: Int, y: Int, teamID: Int, argFillEncampment: Array<Array<Int>>?): Array<Array<Int>> **[private]**
 	- 陣地スコア計算時に再帰探索を行う関数
 	- ある地点から広がれる範囲へ次々に探索を行う
-- isWithInRange(x: Int, y: Int): Boolean
+- isWithInRange(x: Int, y: Int): Boolean **[private]**
 	- 引数x,yが正常な値かどうか(場外にはみ出ていないか)検査して結果をBoolで返す
 
 
