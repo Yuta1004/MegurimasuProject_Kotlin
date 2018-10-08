@@ -64,8 +64,32 @@ class MegurimasuSimulator(agentInitPos: Map<String, Array<Int>>, val scoreData: 
         }
     }
 
-    fun move(behavior: Map<String, Int>): Boolean{
-        return false
+    fun move(behavior: Map<String, Int>){
+        // 行動後の座標を取得する
+        val takeActionPositions = mutableMapOf<String, Int>()
+        behavior.forEach { agentName, type ->
+            if(!agents.containsKey(agentName)){ return@forEach }
+
+            val pos = agents[agentName]!!.takeActionPos(type)
+            val intPos = pos["x"]!!*10 + pos["y"]!!
+            takeActionPositions[agentName] = intPos
+        }
+
+        // 重複を記録する
+        // 重複があればoverLapAgentsの値がtrueになる
+        val overLapAgents = mutableMapOf<String, Boolean>()
+        takeActionPositions.forEach { agentName, value ->
+            overLapAgents[agentName] = takeActionPositions.count { it.value == value} >= 2
+        }
+
+        // 行動をとる座標が重複していないエージェントを動かす
+        overLapAgents.forEach { agentName, isOverLap ->
+            if(isOverLap || !agents.containsKey(agentName) || !behavior.containsKey(agentName)) {
+                return@forEach
+            }
+
+            agents[agentName]!!.move(behavior[agentName]!!)
+        }
     }
 
     fun moveSimulation(behavior: Map<String, Int>): Boolean{
