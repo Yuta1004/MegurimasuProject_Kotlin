@@ -16,9 +16,3 @@ strategyOf...から始まる関数は作戦関数(作戦に基づいて手を選
 - strategyOfPrayToGod(agentName: String): List<Int>
 	- ランダム
 	- [0~7, 10~17]のランダムな値をnum個生成してListにして返す
-
-- getAgentPosFromQR(): Map<String, Array<Int>>
-	- QRデータからエージェントの初期位置を読み込んで返す
-
-- getScoreDataFromQR(): Array<Array<Int>>
-	- QRデータからスコアデータを読み込んで返す
