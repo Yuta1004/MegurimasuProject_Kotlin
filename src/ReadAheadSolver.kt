@@ -17,7 +17,17 @@ fun strategyOfStalker(agentName: String, num: Int): List<Int>{
 }
 
 fun strategyOfPrayToGod(agentName: String, num: Int): List<Int>{
-    return listOf()
+    val retList = mutableListOf<Int>()
+    for(i in 0 until num){
+        var randValue = 0
+        do{
+            randValue = random.nextInt(8) + random.nextInt(2) * 10
+        }while(retList.contains(randValue))
+
+        retList.add(randValue)
+    }
+
+    return retList
 }
 
 fun getAgentPosFromQR(): Map<String, Array<Int>>{
