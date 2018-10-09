@@ -1,4 +1,4 @@
-# 先読みソルバークラス(ReadAheadSolver)
+# 先読みソルバー(ReadAheadSolver)
 何手か先まで読んで最適な手を探す
 strategyOf...から始まる関数は作戦関数(作戦に基づいて手を選ぶ)
 
@@ -15,4 +15,4 @@ strategyOf...から始まる関数は作戦関数(作戦に基づいて手を選
 
 - strategyOfPrayToGod(agentName: String): List<Int>
 	- ランダム
-	- [0~7, 10~17]のランダムな値をnum個生成してListにして返す
+	- [0~7, 10~17]のランダムな値をnum個生成してListにして返すgit 
