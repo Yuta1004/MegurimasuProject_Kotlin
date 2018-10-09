@@ -8,16 +8,16 @@ fun main(args: Array<String>){
     val megurimasu = MegurimasuSimulator(agentPos, scoreData)
 }
 
-fun strategyOfBruteForce(agentName: String): Int{
-    return 0
+fun strategyOfBruteForce(agentName: String, num: Int): List<Int>{
+    return listOf()
 }
 
-fun strategyOfStalker(agentName: String): Int{
-    return 0
+fun strategyOfStalker(agentName: String, num: Int): List<Int>{
+    return listOf()
 }
 
-fun strategyOfPrayToGod(agentName: String): Int{
-    return random.nextInt(8) + random.nextInt(2) * 10
+fun strategyOfPrayToGod(agentName: String, num: Int): List<Int>{
+    return listOf()
 }
 
 fun getAgentPosFromQR(): Map<String, Array<Int>>{

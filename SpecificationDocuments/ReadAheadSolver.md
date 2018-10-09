@@ -7,13 +7,13 @@ strategyOf...から始まる関数は作戦関数(作戦に基づいて手を選
 	- メイン関数
 	- これが一番最初に呼ばれる
 
-- strategyOfBruteForce(agentName: String): Int
+- strategyOfBruteForce(agentName: String): List<Int>
 	- ゴリ押し戦法
 
-- strategyOfStalker(agentName: String): Int
+- strategyOfStalker(agentName: String): List<int>
 	- ストーカー戦法
 
-- strategyOfPrayToGod(agentName: String): Int
+- strategyOfPrayToGod(agentName: String): List<Int>
 	- ランダム
 
 - getAgentPosFromQR(): Map<String, Array<Int>>
