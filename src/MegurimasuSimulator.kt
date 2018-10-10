@@ -31,8 +31,8 @@ class MegurimasuSimulator(agentInitPos: Map<String, Array<Int>>, var scoreData: 
         private fun canAction(type: Int): Boolean {
             if(type !in 0..8 && type !in 10..18) return false
 
-            val xCopy = x + MovementValues.values[type%10]!!["x"]!!
-            val yCopy = y + MovementValues.values[type%10]!!["y"]!!
+            val xCopy = x + movementValues[type%10]!!["x"]!!
+            val yCopy = y + movementValues[type%10]!!["y"]!!
 
             if(!isWithInRange(xCopy, yCopy)){ return false }
             val encampment = encampmentData[yCopy][xCopy]
@@ -46,8 +46,8 @@ class MegurimasuSimulator(agentInitPos: Map<String, Array<Int>>, var scoreData: 
             if(!canAction(type)){ return mapOf("x" to x, "y" to y)}
 
             return mapOf(
-                    "x" to x + MovementValues.values[type%10]!!["x"]!!,
-                    "y" to y + MovementValues.values[type%10]!!["y"]!!
+                    "x" to x + movementValues[type%10]!!["x"]!!,
+                    "y" to y + movementValues[type%10]!!["y"]!!
             )
         }
     }
@@ -197,21 +197,5 @@ class MegurimasuSimulator(agentInitPos: Map<String, Array<Int>>, var scoreData: 
         scoreData = stageData["scoreData"] as Array<Array<Int>>
         encampmentData = stageData["encampmentData"] as Array<Array<Int>>
         agents = agentInit(stageData["agentPos"] as Map<String, Array<Int>>)
-    }
-}
-
-class MovementValues{
-    companion object {
-        val values = mapOf(
-                8 to mapOf("x" to 0,  "y" to 0),
-                0 to mapOf("x" to 0,  "y" to -1),
-                1 to mapOf("x" to 1,  "y" to -1),
-                2 to mapOf("x" to 1,  "y" to 0),
-                3 to mapOf("x" to 1,  "y" to 1),
-                4 to mapOf("x" to 0,  "y" to 1),
-                5 to mapOf("x" to -1, "y" to 1),
-                6 to mapOf("x" to -1, "y" to 0),
-                7 to mapOf("x" to -1, "y" to -1)
-        )
     }
 }
