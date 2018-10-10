@@ -7,7 +7,7 @@
 
 ## メンバ変数
 - **[var private]** width, height: Int → フィールドのサイズ
-- **[var private]** agents: Map<String, Agent> → エージェントクラス保持
+- **[var]** agents: Map<String, Agent> → エージェントクラス保持
 - **[var]** scoreData: Array → フィールドのスコアデータ保持
 - **[var]** encampmentData: Array → フィールドの陣地データ保持
 

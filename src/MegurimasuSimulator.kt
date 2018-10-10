@@ -3,7 +3,7 @@ import kotlin.math.abs
 class MegurimasuSimulator(agentInitPos: Map<String, Array<Int>>, var scoreData: Array<Array<Int>>){
     private var width = scoreData[0].size
     private var height = scoreData.size
-    private var agents = agentInit(agentInitPos)
+    var agents = agentInit(agentInitPos)
     var encampmentData = arrayOf<Array<Int>>()
 
     inner class Agent(private val agentName: String, var x: Int, var y: Int) {
