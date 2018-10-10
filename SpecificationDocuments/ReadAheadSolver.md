@@ -7,12 +7,12 @@ strategyOf...から始まる関数は作戦関数(作戦に基づいて手を選
 	- メイン関数
 	- これが一番最初に呼ばれる
 
-- strategyOfBruteForce(agentName: String): List<Int>
+- strategyOfBruteForce(megurimasu: MegurimasuSimulator, agentName: String, num: Int): List<Int>
 	- ゴリ押し戦法
 
-- strategyOfStalker(agentName: String): List<int>
+- strategyOfStalker(megurimasu: MegurimasuSimulator, agentName: String, num: Int): List<int>
 	- ストーカー戦法
 
-- strategyOfPrayToGod(agentName: String): List<Int>
+- strategyOfPrayToGod(megurimasu: MegurimasuSimulator, agentName: String, num: Int): List<Int>
 	- ランダム
 	- [0~7, 10~17]のランダムな値をnum個生成してListにして返すgit 

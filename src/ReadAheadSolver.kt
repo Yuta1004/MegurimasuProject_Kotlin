@@ -8,15 +8,15 @@ fun main(args: Array<String>){
     val megurimasu = MegurimasuSimulator(agentPos, scoreData)
 }
 
-fun strategyOfBruteForce(agentName: String, num: Int): List<Int>{
+fun strategyOfBruteForce(megurimasu: MegurimasuSimulator, agentName: String, num: Int): List<Int>{
     return listOf()
 }
 
-fun strategyOfStalker(agentName: String, num: Int): List<Int>{
+fun strategyOfStalker(megurimasu: MegurimasuSimulator, agentName: String, num: Int): List<Int>{
     return listOf()
 }
 
-fun strategyOfPrayToGod(agentName: String, num: Int): List<Int>{
+fun strategyOfPrayToGod(megurimasu: MegurimasuSimulator, agentName: String, num: Int): List<Int>{
     val retList = mutableListOf<Int>()
     for(i in 0 until num){
         var randValue = 0
