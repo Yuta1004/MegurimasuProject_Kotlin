@@ -19,10 +19,6 @@
 - agentInit(agentInitPos): Map<String, Agent> **[private]**
 	- コンストラクタで与えられたagentInitPosを元にエージェントクラスのMapを生成する
 
-- getTeamID(agentName: String): Int **[private]**
-	- エージェントIDに対応したチームIDを返す
-	- A -> 1, B -> 2
-
 - action(behavior: Map<String, Int>)
 	- 引数behaviorには4つのキーを含めること["A_1", "A_2", "B_1", "B_2"]
 	- それぞれのキーの値に基づいてエージェント・陣地情報を更新する

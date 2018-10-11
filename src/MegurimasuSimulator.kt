@@ -69,14 +69,6 @@ class MegurimasuSimulator(agentInitPos: Map<String, Array<Int>>, var scoreData: 
         return agents
     }
 
-    private fun getTeamID(agentName: String): Int{
-        return when(agentName){
-            "A_1", "A_2", "A" -> 1
-            "B_1", "B_2", "B" -> 2
-            else -> 0
-        }
-    }
-
     fun action(behavior: Map<String, Int>){
         // 行動後の座標を取得する
         val takeActionPositions = mutableMapOf<String, Int>()

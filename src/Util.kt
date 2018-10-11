@@ -20,6 +20,14 @@ fun getMovedPos(x: Int, y: Int, type: Int): Pair<Int, Int>{
     )
 }
 
+fun getTeamID(agentName: String): Int{
+    return when(agentName){
+        "A_1", "A_2", "A" -> 1
+        "B_1", "B_2", "B" -> 2
+        else -> 0
+    }
+}
+
 val movementValues = mapOf(
         8 to mapOf("x" to 0,  "y" to 0),
         0 to mapOf("x" to 0,  "y" to -1),
