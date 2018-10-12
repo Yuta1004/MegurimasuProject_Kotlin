@@ -45,6 +45,10 @@ fun calDegree2Points(x: Double, y: Double, x_2: Double, y_2: Double): Double{
     return degree
 }
 
+fun calDegree2Points(x: Int, y: Int, x_2: Int, y_2: Int): Double{
+    return calDegree2Points(x.toDouble(), y.toDouble(), x_2.toDouble(), y_2.toDouble())
+}
+
 val movementValues = mapOf(
         8 to mapOf("x" to 0,  "y" to 0),
         0 to mapOf("x" to 0,  "y" to -1),
