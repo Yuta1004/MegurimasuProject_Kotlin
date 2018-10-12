@@ -1,3 +1,5 @@
+import kotlin.math.sqrt
+
 fun getAgentPosFromQR(): Map<String, Array<Int>>{
     return mapOf(
             "A_1" to arrayOf(0, 1),
@@ -26,6 +28,10 @@ fun getTeamID(agentName: String): Int{
         "B_1", "B_2", "B" -> 2
         else -> 0
     }
+}
+
+fun calDist(x: Int, y: Int, x_1: Int, y_1:Int): Double{
+    return sqrt( ((x-x_1) * (x-x_1) + (y-y_1) * (y-y_1)).toDouble() )
 }
 
 val movementValues = mapOf(
