@@ -45,7 +45,30 @@ fun strategyOfBruteForce(megurimasu: MegurimasuSimulator, agentName: String, num
 }
 
 fun strategyOfStalker(megurimasu: MegurimasuSimulator, agentName: String, num: Int): List<Int>{
-    return listOf()
+    // 存在しないエージェントの名前が引数で与えられたとき時は全てが8のListを返す
+    if(agentName !in megurimasu.agents.keys){
+        return Array(num){ _ -> 8}.toList()
+    }
+
+    // 一番近い敵エージェントを探す
+    val enemyTeam = if("A" in agentName) "B" else "A"
+    val agent = megurimasu.agents[agentName]!!
+    val enemyAgents = arrayOf(megurimasu.agents["${enemyTeam}_1"]!!, megurimasu.agents["${enemyTeam}_2"]!!)
+    val minDistAgent = enemyAgents
+            .minBy { calDist(agent.x, agent.y, it.x, it.y) }!!
+
+    // 一番近いエージェントに近づくための行動タイプを探す
+    val meAgentDegree = calDegree2Points(agent.x, agent.y, minDistAgent.x, minDistAgent.y).toInt()
+    val optimalActionType = (meAgentDegree % 360 / 45 + 2) % 8
+
+    // 評価の高いものから順にListに放り込む
+    val retList = mutableListOf(optimalActionType)
+    for(i: Int in 1..4){
+        retList.add((optimalActionType + i + 8) % 8)
+        retList.add((optimalActionType + (i * -1) + 8) % 8)
+    }
+
+    return retList.take(num)
 }
 
 fun strategyOfPrayToGod(megurimasu: MegurimasuSimulator, agentName: String, num: Int): List<Int>{
