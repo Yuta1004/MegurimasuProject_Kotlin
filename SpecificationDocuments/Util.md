@@ -1,5 +1,5 @@
 # ユーティリティ
-様々なクラスから扱いたい関数や変数を置く
+汎用的な関数や変数を置く
 
 ## 関数
 - getAgentPosFromQR(): Map<String, Array<Int>>
@@ -17,6 +17,9 @@
 
 - calDict(x: Int, y: Int, x_1: Int, y_1: Int): Double
 	- (x, y)と(x_1, y_1)の2点間の距離を計算して返す
+
+- calDegree2Points(x: Double, y: Double, x_2: Double, y_2: Double): Double
+	- (x, y)と(x_1, y_1)の2点の角度(度数法)を計算して返す
 
 ## 変数
 - movementValue: Map<Integer, Map<String, Int>>

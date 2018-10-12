@@ -1,4 +1,6 @@
+import kotlin.math.PI
 import kotlin.math.sqrt
+import kotlin.math.atan2
 
 fun getAgentPosFromQR(): Map<String, Array<Int>>{
     return mapOf(
@@ -32,6 +34,15 @@ fun getTeamID(agentName: String): Int{
 
 fun calDist(x: Int, y: Int, x_1: Int, y_1:Int): Double{
     return sqrt( ((x-x_1) * (x-x_1) + (y-y_1) * (y-y_1)).toDouble() )
+}
+
+fun calDegree2Points(x: Double, y: Double, x_2: Double, y_2: Double): Double{
+    var degree = atan2(y_2-y, x_2-x) * 180 / PI
+    if(degree < 0){
+        degree += 360
+    }
+
+    return degree
 }
 
 val movementValues = mapOf(
