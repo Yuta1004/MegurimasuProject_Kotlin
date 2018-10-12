@@ -15,7 +15,7 @@ fun getScoreDataFromQR(): Array<Array<Int>>{
     return Array(12) { _ -> Array(12) {random.nextInt(32)-16}}
 }
 
-fun getMovedPos(x: Int, y: Int, type: Int): Pair<Int, Int>{
+fun getActionPos(x: Int, y: Int, type: Int): Pair<Int, Int>{
     if(x%10 !in 0..8 || y%10 !in 0..8){ return Pair(0, 0) }
 
     return Pair(

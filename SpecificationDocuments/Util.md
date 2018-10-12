@@ -8,7 +8,7 @@
 - getScoreDataFromQR(): Array<Array<Int>>
 	- QRデータからスコアデータを読み込んで返す
 
-- getMovedPos(x: Int, y: Int, type: Int): Pair<Int, Int>
+- getActionPos(x: Int, y: Int, type: Int): Pair<Int, Int>
 	- 引数typeの通りに行動を起こした時の影響を及ぼす座標を計算する
 
 - getTeamID(agentName: String): Int

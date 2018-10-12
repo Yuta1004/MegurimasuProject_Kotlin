@@ -31,8 +31,7 @@ class MegurimasuSimulator(agentInitPos: Map<String, Array<Int>>, var scoreData: 
         private fun canAction(type: Int): Boolean {
             if(type !in 0..8 && type !in 10..18) return false
 
-            val xCopy = x + movementValues[type%10]!!["x"]!!
-            val yCopy = y + movementValues[type%10]!!["y"]!!
+            val (xCopy, yCopy) = getActionPos(x, y, type%10)
 
             if(!isWithInRange(xCopy, yCopy)){ return false }
             val encampment = encampmentData[yCopy][xCopy]
@@ -42,13 +41,12 @@ class MegurimasuSimulator(agentInitPos: Map<String, Array<Int>>, var scoreData: 
         }
 
         fun takeActionPos(type: Int): Map<String, Int>{
+            // typeが範囲外であったり行動できなかったりする場合は計算せずに返す
             if(type !in 0..8 && type !in 10..18){ return mapOf("x" to 0, "y" to 0) }
             if(!canAction(type)){ return mapOf("x" to x, "y" to y)}
 
-            return mapOf(
-                    "x" to x + movementValues[type%10]!!["x"]!!,
-                    "y" to y + movementValues[type%10]!!["y"]!!
-            )
+            val (retX, retY) = getActionPos(x, y, type%10)
+            return mapOf("x" to retX, "y" to retY)
         }
     }
 

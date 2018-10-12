@@ -11,7 +11,7 @@ fun main(args: Array<String>){
 }
 
 fun strategyOfBruteForce(megurimasu: MegurimasuSimulator, agentName: String, num: Int): List<Int>{
-    val moveScoreList = arrayListOf<Int>()
+    val actionedScoreList = arrayListOf<Int>()
     for(i in 0..7){
         val movableList = listOf(0, 1, 2, 3, 4, 5, 6, 7).filter { it -> it != (i+4)%8 }
 
@@ -21,22 +21,22 @@ fun strategyOfBruteForce(megurimasu: MegurimasuSimulator, agentName: String, num
         movableList.forEach{ type ->
             val agentX = megurimasu.agents[agentName]!!.x
             val agentY = megurimasu.agents[agentName]!!.y
-            val (movedX, movedY) = getMovedPos(agentX, agentY, i)
-            val (movedXTwo, movedYTwo) = getMovedPos(movedX, movedY, type)
+            val (actionX, actionY) = getActionPos(agentX, agentY, i)
+            val (actionXTwo, actionYTwo) = getActionPos(actionX, actionY, type)
 
             try {
-                maxValue = max(megurimasu.scoreData[movedY][movedX] + megurimasu.scoreData[movedYTwo][movedXTwo], maxValue)
+                maxValue = max(megurimasu.scoreData[actionY][actionX] + megurimasu.scoreData[actionYTwo][actionXTwo], maxValue)
             } catch (e: IndexOutOfBoundsException) {
                 // 要素外参照エラー
                 // このエラーが起きた時は集計しない
             }
         }
 
-        moveScoreList.add(maxValue)
+        actionedScoreList.add(maxValue)
     }
 
     // スコアを降順にソートして指定数だけ選択してそのidxを返す
-    return moveScoreList
+    return actionedScoreList
             .toIntArray()
             .mapIndexed{ idx, elem -> idx to elem }
             .sortedByDescending { ( _, value) -> value }
