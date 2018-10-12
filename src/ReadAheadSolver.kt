@@ -11,12 +11,12 @@ fun main(args: Array<String>){
 }
 
 fun strategyOfBruteForce(megurimasu: MegurimasuSimulator, agentName: String, num: Int): List<Int>{
-    // 現在の盤面から1つ手を選択した時，それに対して新たに手を選択した合計2手のスコアを計算して集計する
-    // 必要なのは1手後の情報だけなので，2手後の選択については特に選択した手の保持などをしない
     val moveScoreList = arrayListOf<Int>()
     for(i in 0..7){
         val movableList = listOf(0, 1, 2, 3, 4, 5, 6, 7).filter { it -> it != (i+4)%8 }
 
+        // 現在の盤面から1つ手を選択した時，それに対して新たに手を選択した合計2手のスコアを計算して集計する
+        // 必要なのは1手後の情報だけなので，2手後の選択については特に選択した手の保持などをしない
         var maxValue = -99
         movableList.forEach{ type ->
             val agentX = megurimasu.agents[agentName]!!.x
@@ -72,6 +72,7 @@ fun strategyOfStalker(megurimasu: MegurimasuSimulator, agentName: String, num: I
 }
 
 fun strategyOfPrayToGod(megurimasu: MegurimasuSimulator, agentName: String, num: Int): List<Int>{
+    // ランダムに値を選択してListに詰めて返す
     val retList = mutableListOf<Int>()
     for(i in 0 until num){
         var randValue = 0
