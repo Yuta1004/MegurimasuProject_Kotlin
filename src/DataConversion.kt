@@ -8,13 +8,6 @@ class DataConversion {
             // ステージデータ(幅，高さ)
             conversionStr = "${width.toString(36)}:${height.toString(36)}:"
 
-            // スコアデータ
-            scoreData.forEach { array ->
-                conversionStr += array
-                        .map{ (it+16).toString(36) }
-                        .reduce { s1, s2 -> s1 + s2 } + ":"
-            }
-
             // 陣地データ
             encampmentData.forEach { array ->
                 val binStr = array
@@ -39,20 +32,11 @@ class DataConversion {
             val width = numAtoB(splitTarget[0], 36, 10)
             val height = numAtoB(splitTarget[1], 36, 10)
 
-            // スコアデータ
-            // 32進数の文字それぞれを10進数に直して16を引く
-            val scoreData = Array(height) { _ -> Array(width){0}}
-            for(i in 0 until height){
-                splitTarget[i+2].forEachIndexed { index, char ->
-                    scoreData[i][index] = numAtoB(char.toString(), 36, 10) - 16
-                }
-            }
-
             // 陣地データ
             // 36進数を2進数に変換した後，2個ずつ数字を連結してそれを10進数に直す
             val encampmentData = Array(height) { _ -> Array(width){0}}
             for(i in 0 until height){
-                var binStr = Integer.parseInt(splitTarget[i+2+height], 36).toString(2)
+                var binStr = Integer.parseInt(splitTarget[i+2], 36).toString(2)
                 binStr = String.format("%"+(height*2)+"s", binStr).replace(" ", "0")
 
                 for(charIdx in 0 until width*2 step 2){
@@ -65,7 +49,7 @@ class DataConversion {
             val agentPos = mutableMapOf<String, Array<Int>>()
             val agentNames = listOf("A_1", "A_2", "B_1", "B_2")
             for(i in 0 until 4){
-                val agent = splitTarget[i+(height)*2+2]
+                val agent = splitTarget[i+height+2]
                 val agentX = numAtoB(agent[0].toString(), 36, 10)
                 val agentY = numAtoB(agent[1].toString(), 36, 10)
                 agentPos[agentNames[i]] = arrayOf(agentX, agentY)
@@ -74,7 +58,6 @@ class DataConversion {
             return mapOf(
                     "width" to width,
                     "height" to height,
-                    "scoreData" to scoreData,
                     "encampmentData" to encampmentData,
                     "agentPos" to agentPos
             )

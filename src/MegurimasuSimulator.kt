@@ -184,7 +184,6 @@ class MegurimasuSimulator(agentInitPos: Map<String, Array<Int>>, var scoreData: 
 
         width = stageData["width"] as Int
         height = stageData["height"] as Int
-        scoreData = stageData["scoreData"] as Array<Array<Int>>
         encampmentData = stageData["encampmentData"] as Array<Array<Int>>
         agents = agentInit(stageData["agentPos"] as Map<String, Array<Int>>)
     }
