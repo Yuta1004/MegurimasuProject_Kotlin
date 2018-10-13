@@ -7,6 +7,10 @@ strategyOf...から始まる関数は作戦関数(作戦に基づいて手を選
 	- メイン関数
 	- これが一番最初に呼ばれる
 
+- searchBestBehavior(megurimasu: MegurimasuSimulator, depth: Int, probability: Array<Int>): Pair<Int, Map<String, Int>>
+	- depth -> ゲーム木の深さ, probability -> ゴリ押し・ストーカー・ランダムをどれくらい採用するか
+	- ゲーム木で探索を行ってもっとも良いスコアとなる手を返す
+
 - strategyOfBruteForce(megurimasu: MegurimasuSimulator, agentName: String, num: Int): List<Int>
 	- ゴリ押し戦法
 	- 2手先までのスコアを計算して一番高いスコアが得られる行動タイプを選択する
