@@ -14,14 +14,13 @@ fun main(args: Array<String>){
 //    // 速度計算用
 //    for(i: Int in 0 until 100) {
 //        var result = Pair(0, mapOf("Null" to 0))
-//        val time = measureTimeMillis { result = searchBestBehavior(megurimasu, 3, arrayOf(0, 0, 5)) }
+//        val time = measureTimeMillis { result = searchBestBehavior(megurimasu, 3, arrayOf(3, 2, 1)) }
 //        val (maxScore, bestBehavior) = result
 //
 //        println("Time: $time ms")
 //        println("MaxScore: $maxScore")
 //        println("BestBehavior: A_1 -> ${bestBehavior["A_1"]}, A_2 -> ${bestBehavior["A_2"]}")
 //        println()
-//        cnt = 0
 //    }
 }
 
@@ -74,24 +73,37 @@ fun searchBestBehavior(megurimasu: MegurimasuSimulator, depth: Int, probability:
 }
 
 fun strategyOfBruteForce(megurimasu: MegurimasuSimulator, agentName: String, num: Int): List<Int>{
-    val actionedScoreList = arrayListOf<Int>()
+    val actionedScoreList = arrayListOf<Array<Int>>()
     for(i in 0..7){
+        var _i = i
         val movableList = listOf(0, 1, 2, 3, 4, 5, 6, 7).filter { it -> it != (i+4)%8 }
 
         // 現在の盤面から1つ手を選択した時，それに対して新たに手を選択した合計2手のスコアを計算して集計する
         // 必要なのは1手後の情報だけなので，2手後の選択については特に選択した手の保持などをしない
-        var maxValue = -99
+        val maxValue = arrayOf(-99, 0)
         movableList.forEach{ type ->
+            // 必要な座標を取得
             val agentX = megurimasu.agents[agentName]!!.x
             val agentY = megurimasu.agents[agentName]!!.y
             val (actionX, actionY) = getActionPos(agentX, agentY, i)
             val (actionXTwo, actionYTwo) = getActionPos(actionX, actionY, type)
 
-            try {
-                maxValue = max(megurimasu.scoreData[actionY][actionX] + megurimasu.scoreData[actionYTwo][actionXTwo], maxValue)
-            } catch (e: IndexOutOfBoundsException) {
-                // 要素外参照エラー
-                // このエラーが起きた時は集計しない
+            // 範囲外
+            try { megurimasu.encampmentData[actionX][actionY]; megurimasu.encampmentData[actionYTwo][actionXTwo]}
+            catch (e: IndexOutOfBoundsException){ return@forEach }
+
+            // 既に自分の陣地であるか敵の陣地だった場合は負の評価を与えたのちに集計する
+            var score = megurimasu.scoreData[actionY][actionX] + megurimasu.scoreData[actionYTwo][actionXTwo]
+            when(megurimasu.encampmentData[actionY][actionX]){
+                0 -> { }
+                getTeamID(agentName) -> score -= 8
+                else -> {score -= 5; _i += 10}
+            }
+
+            // 最大値更新
+            if(maxValue[0] < score){
+                maxValue[0] = score
+                maxValue[1] = _i
             }
         }
 
@@ -100,11 +112,11 @@ fun strategyOfBruteForce(megurimasu: MegurimasuSimulator, agentName: String, num
 
     // スコアを降順にソートして指定数だけ選択してそのidxを返す
     return actionedScoreList
-            .toIntArray()
-            .mapIndexed{ idx, elem -> idx to elem }
-            .sortedByDescending { ( _, value) -> value }
+            .asSequence()
+            .sortedByDescending { ( score, _) -> score }
             .take(num)
-            .map { it.first }
+            .map { it[1] }
+            .toList()
 }
 
 fun strategyOfStalker(megurimasu: MegurimasuSimulator, agentName: String, num: Int): List<Int>{
