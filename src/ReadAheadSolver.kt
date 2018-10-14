@@ -49,7 +49,7 @@ fun searchBestBehavior(megurimasu: MegurimasuSimulator, depth: Int, probability:
             .map{ agentName ->
                 val bruteforce = strategyOfBruteForce(megurimasu, agentName, probability[0])
                 val stalker = strategyOfStalker(megurimasu, agentName, probability[1])
-                 val prayToGod = strategyOfPrayToGod(megurimasu, agentName, probability[2])
+                val prayToGod = strategyOfPrayToGod(probability[2])
 
                 agentName to bruteforce + stalker + prayToGod
             }
@@ -175,7 +175,7 @@ fun strategyOfStalker(megurimasu: MegurimasuSimulator, agentName: String, num: I
     return retList.take(num)
 }
 
-fun strategyOfPrayToGod(megurimasu: MegurimasuSimulator, agentName: String, num: Int): List<Int>{
+fun strategyOfPrayToGod(num: Int): List<Int>{
     // ランダムに値を選択してListに詰めて返す
     val retList = mutableListOf<Int>()
     for(i in 0 until num){

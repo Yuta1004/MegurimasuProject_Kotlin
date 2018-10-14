@@ -19,6 +19,6 @@ strategyOf...から始まる関数は作戦関数(作戦に基づいて手を選
 	- ストーカー戦法
 	- 自分の座標と相手の座標から角度を算出して，その角度にあった行動タイプを選択する
 
-- strategyOfPrayToGod(megurimasu: MegurimasuSimulator, agentName: String, num: Int): List<Int>
+- strategyOfPrayToGod(num: Int): List<Int>
 	- ランダム
 	- [0~7, 10~17]のランダムな値をnum個生成してListにして返すgit 
