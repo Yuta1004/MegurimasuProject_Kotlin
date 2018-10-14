@@ -157,6 +157,21 @@ fun strategyOfStalker(megurimasu: MegurimasuSimulator, agentName: String, num: I
         retList.add((optimalActionType + (i * -1) + 8) % 8)
     }
 
+    // 敵陣地だった場合はパネル除去を行うように
+    retList.forEachIndexed { idx, elem  ->
+        val agentX = megurimasu.agents[agentName]!!.x
+        val agentY = megurimasu.agents[agentName]!!.y
+        val (actionX, actionY) = getActionPos(agentX, agentY, elem)
+
+        // 範囲外
+        try { megurimasu.encampmentData[actionX][actionY]}
+        catch (e: IndexOutOfBoundsException){ return@forEachIndexed }
+
+        if(!listOf(0, getTeamID(agentName)).contains(megurimasu.encampmentData[actionY][actionX])){
+            retList[idx] += 10
+        }
+    }
+
     return retList.take(num)
 }
 
