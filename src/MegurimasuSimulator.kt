@@ -21,7 +21,7 @@ class MegurimasuSimulator(agentInitPos: Map<String, Array<Int>>, var scoreData: 
                 // パネル除去
                 in 10..17 ->{
                     val movedValues = takeActionPos(type)
-                    encampmentData[movedValues["x"]!!][movedValues["y"]!!] = 0
+                    encampmentData[movedValues["y"]!!][movedValues["x"]!!] = 0
                 }
             }
 
@@ -112,7 +112,7 @@ class MegurimasuSimulator(agentInitPos: Map<String, Array<Int>>, var scoreData: 
         score.forEach { key, _ ->
             val teamID = getTeamID(key)
             score[key] = flatScoreDara
-                    .filterIndexed { idx, _ -> encampmentData[idx/height][idx%width] == teamID }
+                    .filterIndexed { idx, _ -> encampmentData[idx/width][idx%width] == teamID; }
                     .sum()
         }
 
@@ -135,7 +135,7 @@ class MegurimasuSimulator(agentInitPos: Map<String, Array<Int>>, var scoreData: 
 
             // 探索結果をスコアに反映
             val encScore = flatScoreDara
-                    .filterIndexed { idx, _ -> fillEncampment!![idx/height][idx%width] == 1 }
+                    .filterIndexed { idx, _ -> fillEncampment!![idx/width][idx%width] == 1 }
                     .sum()
             score[teamIDStr]!!.plus(encScore)
         }

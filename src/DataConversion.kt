@@ -37,7 +37,7 @@ class DataConversion {
             val encampmentData = Array(height) { _ -> Array(width){0}}
             for(i in 0 until height){
                 var binStr = Integer.parseInt(splitTarget[i+2], 36).toString(2)
-                binStr = String.format("%"+(height*2)+"s", binStr).replace(" ", "0")
+                binStr = String.format("%"+(width*2)+"s", binStr).replace(" ", "0")
 
                 for(charIdx in 0 until width*2 step 2){
                     encampmentData[i][charIdx/2] = "${binStr[charIdx]}${binStr[charIdx+1]}".toInt(2)
