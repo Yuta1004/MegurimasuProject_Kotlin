@@ -11,17 +11,29 @@ fun main(args: Array<String>){
     val scoreData = getScoreDataFromQR()
     val megurimasu = MegurimasuSimulator(agentPos, scoreData)
 
-//    // 速度計算用
-//    for(i: Int in 0 until 100) {
-//        var result = Pair(0, mapOf("Null" to 0))
-//        val time = measureTimeMillis { result = searchBestBehavior(megurimasu, 3, arrayOf(3, 2, 1)) }
-//        val (maxScore, bestBehavior) = result
-//
-//        println("Time: $time ms")
-//        println("MaxScore: $maxScore")
-//        println("BestBehavior: A_1 -> ${bestBehavior["A_1"]}, A_2 -> ${bestBehavior["A_2"]}")
+    // 速度計算・デモ用
+    for(i: Int in 0 until 100) {
+        var result = Pair(0, mapOf("Null" to 0))
+        val time = measureTimeMillis { result = searchBestBehavior(megurimasu, 3, arrayOf(3, 2, 1)) }
+        val (maxScore, bestBehavior) = result
+
+        println("Time: $time ms")
+        println("MaxScore: $maxScore")
+        println("BestBehavior: A_1 -> ${bestBehavior["A_1"]}, A_2 -> ${bestBehavior["A_2"]}")
 //        println()
-//    }
+
+        val behavior = mapOf(
+                "A_1" to bestBehavior["A_1"]!!,
+                "A_2" to bestBehavior["A_2"]!!,
+                "B_1" to random.nextInt(8),
+                "B_2" to random.nextInt(8)
+        )
+        megurimasu.action(behavior)
+        val score = megurimasu.calScore()
+        println("Score: A -> ${score["A"]}, B -> ${score["B"]}")
+        megurimasu.encampmentData.forEach { it.forEach { print("$it ") }; println() }
+        println()
+    }
 }
 
 // 再帰でより良い手を探す
@@ -96,8 +108,8 @@ fun strategyOfBruteForce(megurimasu: MegurimasuSimulator, agentName: String, num
             var score = megurimasu.scoreData[actionY][actionX] + megurimasu.scoreData[actionYTwo][actionXTwo]
             when(megurimasu.encampmentData[actionY][actionX]){
                 0 -> { }
-                getTeamID(agentName) -> score -= 8
-                else -> {score -= 5; _i += 10}
+                getTeamID(agentName) -> score -= 10
+                else -> {score -= 6; _i += 10}
             }
 
             // 最大値更新
@@ -105,6 +117,8 @@ fun strategyOfBruteForce(megurimasu: MegurimasuSimulator, agentName: String, num
                 maxValue[0] = score
                 maxValue[1] = _i
             }
+
+            if(_i > 10){ _i %= 10 }
         }
 
         actionedScoreList.add(maxValue)
