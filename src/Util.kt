@@ -2,19 +2,6 @@ import kotlin.math.PI
 import kotlin.math.sqrt
 import kotlin.math.atan2
 
-fun getAgentPosFromQR(): Map<String, Array<Int>>{
-    return mapOf(
-            "A_1" to arrayOf(2, 2),
-            "A_2" to arrayOf(9, 9),
-            "B_1" to arrayOf(2, 9),
-            "B_2" to arrayOf(9, 2)
-    )
-}
-
-fun getScoreDataFromQR(): Array<Array<Int>>{
-    return Array(12) { _ -> Array(12) {random.nextInt(32)-16}}
-}
-
 fun getActionPos(x: Int, y: Int, type: Int): Pair<Int, Int>{
     if(type%10 !in 0..8 && type%10 !in 10..18){ return Pair(0, 0) }
 
