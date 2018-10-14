@@ -4,10 +4,10 @@ import kotlin.math.atan2
 
 fun getAgentPosFromQR(): Map<String, Array<Int>>{
     return mapOf(
-            "A_1" to arrayOf(0, 1),
-            "A_2" to arrayOf(0, 2),
-            "B_1" to arrayOf(0, 3),
-            "B_2" to arrayOf(0, 4)
+            "A_1" to arrayOf(2, 2),
+            "A_2" to arrayOf(9, 9),
+            "B_1" to arrayOf(2, 9),
+            "B_2" to arrayOf(9, 2)
     )
 }
 
@@ -16,7 +16,7 @@ fun getScoreDataFromQR(): Array<Array<Int>>{
 }
 
 fun getActionPos(x: Int, y: Int, type: Int): Pair<Int, Int>{
-    if(x%10 !in 0..8 || y%10 !in 0..8){ return Pair(0, 0) }
+    if(type%10 !in 0..8 && type%10 !in 10..18){ return Pair(0, 0) }
 
     return Pair(
             x + movementValues[type]!!["x"]!!,
