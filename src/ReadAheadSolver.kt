@@ -7,13 +7,18 @@ import kotlin.system.measureTimeMillis
 val random = Random()
 
 fun main(args: Array<String>){
-    val qrDecorder = QRParser("8 11:-2 1 0 1 2 0 2 1 0 1 -2:1 3 2 -2 0 1 0 -2 2 3 1:1 3 2 1 0 -2 0 1 2 3 1:2 1 1 2 2 3 2 2 1 1 2:2 1 1 2 2 3 2 2 1 1 2:1 3 2 1 0 -2 0 1 2 3 1:1 3 2 -2 0 1 0 -2 2 3 1:-2 1 0 1 2 0 2 1 0 1 -2:2 2:7 10:")
+    print("Please input QR-DATA > ")
+    val qrData = readLine()!!
+
+//    val qrData = "11 9:9 0 13 -5 10 -5 13 0 9:11 6 1 10 7 10 1 6 11:5 12 13 10 14 10 13 12 5:11 5 13 1 2 1 13 5 11:0 0 10 0 4 0 10 0 0:8 12 -3 12 8 12 -3 12 8:0 0 10 0 4 0 10 0 0:11 5 13 1 2 1 13 5 11:5 12 13 10 14 10 13 12 5:11 6 1 10 7 10 1 6 11:9 0 13 -5 10 -5 13 0 9:5 1:7 9:"
+    val qrDecorder = QRParser(qrData)
     val agentPos = qrDecorder.getAgentPos()
     val scoreData = qrDecorder.getScoreData()
     val megurimasu = MegurimasuSimulator(agentPos, scoreData)
 
     // 速度計算・デモ用
-    for(i: Int in 0 until 100) {
+    val loopLimit = 100
+    for(i: Int in 0 until loopLimit) {
         var result = Pair(0, mapOf("Null" to 0))
         val time = measureTimeMillis { result = searchBestBehavior(megurimasu, 3, arrayOf(3, 2, 1)) }
         val (maxScore, bestBehavior) = result
@@ -21,18 +26,22 @@ fun main(args: Array<String>){
         println("Time: $time ms")
         println("MaxScore: $maxScore")
         println("BestBehavior: A_1 -> ${bestBehavior["A_1"]}, A_2 -> ${bestBehavior["A_2"]}")
-//        println()
+
+        print(" > Please Input B_1 action -> ")
+        val B1Action = readLine()!!.toInt()
+        print(" > Please input B_2 action -> ")
+        val B2Action = readLine()!!.toInt()
 
         val behavior = mapOf(
                 "A_1" to bestBehavior["A_1"]!!,
                 "A_2" to bestBehavior["A_2"]!!,
-                "B_1" to random.nextInt(8),
-                "B_2" to random.nextInt(8)
+                "B_1" to B1Action,
+                "B_2" to B2Action
         )
         megurimasu.action(behavior)
         val score = megurimasu.calScore()
         println("Score: A -> ${score["A"]}, B -> ${score["B"]}")
-        megurimasu.encampmentData.forEach { it.forEach { print("$it ") }; println() }
+//        megurimasu.encampmentData.forEach { it.forEach { print("$it ") }; println() }
         println()
     }
 }
