@@ -35,7 +35,16 @@ class MegurimasuSimulator(agentInitPos: Map<String, Array<Int>>, var scoreData: 
 
             if(!isWithInRange(xCopy, yCopy)){ return false }
             val encampment = encampmentData[yCopy][xCopy]
-            if(encampment != getTeamID(agentName) && encampment != 0){ return false }
+
+            when(type){
+                // 移動の場合: 移動先が敵の陣地であれば(=自分の陣地でないかつ空白ではない)場合は移動不許可
+                in 0..8 -> {
+                    if(encampment != getTeamID(agentName) && encampment != 0){ return false }
+                }
+
+                // パネル除去の場合: 移動先が空白の場合は除去不許可
+                else -> if(encampment == 0){ return false }
+            }
 
             return true
         }
