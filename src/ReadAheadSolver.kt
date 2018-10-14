@@ -7,8 +7,9 @@ import kotlin.system.measureTimeMillis
 val random = Random()
 
 fun main(args: Array<String>){
-    val agentPos = getAgentPosFromQR()
-    val scoreData = getScoreDataFromQR()
+    val qrDecorder = QRParser("8 11:-2 1 0 1 2 0 2 1 0 1 -2:1 3 2 -2 0 1 0 -2 2 3 1:1 3 2 1 0 -2 0 1 2 3 1:2 1 1 2 2 3 2 2 1 1 2:2 1 1 2 2 3 2 2 1 1 2:1 3 2 1 0 -2 0 1 2 3 1:1 3 2 -2 0 1 0 -2 2 3 1:-2 1 0 1 2 0 2 1 0 1 -2:2 2:7 10:")
+    val agentPos = qrDecorder.getAgentPos()
+    val scoreData = qrDecorder.getScoreData()
     val megurimasu = MegurimasuSimulator(agentPos, scoreData)
 
     // 速度計算・デモ用
@@ -101,8 +102,8 @@ fun strategyOfBruteForce(megurimasu: MegurimasuSimulator, agentName: String, num
             val (actionXTwo, actionYTwo) = getActionPos(actionX, actionY, type)
 
             // 範囲外
-            try { megurimasu.encampmentData[actionX][actionY]; megurimasu.encampmentData[actionYTwo][actionXTwo]}
-            catch (e: IndexOutOfBoundsException){ return@forEach }
+            try { megurimasu.encampmentData[actionY][actionX]; megurimasu.encampmentData[actionYTwo][actionXTwo]}
+            catch (e: ArrayIndexOutOfBoundsException){ return@forEach }
 
             // 既に自分の陣地であるか敵の陣地だった場合は負の評価を与えたのちに集計する
             var score = megurimasu.scoreData[actionY][actionX] + megurimasu.scoreData[actionYTwo][actionXTwo]
@@ -164,7 +165,7 @@ fun strategyOfStalker(megurimasu: MegurimasuSimulator, agentName: String, num: I
         val (actionX, actionY) = getActionPos(agentX, agentY, elem)
 
         // 範囲外
-        try { megurimasu.encampmentData[actionX][actionY]}
+        try { megurimasu.encampmentData[actionY][actionX]}
         catch (e: IndexOutOfBoundsException){ return@forEachIndexed }
 
         if(!listOf(0, getTeamID(agentName)).contains(megurimasu.encampmentData[actionY][actionX])){
