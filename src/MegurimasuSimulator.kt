@@ -146,7 +146,7 @@ class MegurimasuSimulator(agentInitPos: Map<String, Array<Int>>, var scoreData: 
             val encScore = flatScoreDara
                     .filterIndexed { idx, _ -> fillEncampment!![idx/width][idx%width] == 1 }
                     .sum()
-            score[teamIDStr]!!.plus(encScore)
+            score[teamIDStr] = score[teamIDStr]!!.plus(encScore)
         }
 
         return score
