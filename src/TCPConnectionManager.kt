@@ -30,6 +30,7 @@ class TCPConnectionManager(private val hostAddress: String, private val hostPort
 
         socket!!.close()
         println("Socket Closed")
+        receiver("close")
     }
 
     private fun receiveData(){
