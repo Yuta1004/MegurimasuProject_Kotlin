@@ -86,7 +86,6 @@ class MegurimasuSimulator(agentInitPos: Map<String, Array<Int>>, var scoreData: 
         // エージェントを行動させる(重複してないかつ条件を満たしたものだけ)
         duplicateDetection(takeActionPositions)
                 .forEach { agentName, isDuplicate ->
-                    println("$agentName, $isDuplicate")
                     if(isDuplicate || !agents.containsKey(agentName) || !behavior.containsKey(agentName)) {
                         return@forEach
                     }
@@ -108,7 +107,6 @@ class MegurimasuSimulator(agentInitPos: Map<String, Array<Int>>, var scoreData: 
         // 重複があればduplicateCheckMapの値がtrueになる
         val duplicateCheckMap = mutableMapOf<String, Boolean>()
         target.forEach { agentName, value ->
-            println("$agentName $value")
             duplicateCheckMap[agentName] = target.count { it.value == value} >= 2
         }
 
