@@ -6,6 +6,20 @@ var probability = arrayOf(5, 0, 0)
 fun main(args: Array<String>){
     TCPConnectionManager("localhost", 6666, ::tcpReceiver).receiveStart()
 
+    // TODO: ゲーム中でも変更できるようにする
+    // 何手先まで読むか尋ねる
+    print("Please Input Search Depth > ")
+    val inpValue = readLine()?: "3"
+    depth = inpValue.toInt()
+
+    // 戦略を尋ねる
+    listOf("BruteForce", "Stalker", "PrayToGod").forEachIndexed { idx, strategy ->
+        print("Use Strategy [$strategy] > ")
+        val inpStrategyUseValue = readLine()?: "2"
+        probability[idx] = inpStrategyUseValue.toInt()
+    }
+    println()
+
     // QRデータ待機
     println("Please Input QR Data")
     while(qrData == null){ Thread.sleep(5) }
