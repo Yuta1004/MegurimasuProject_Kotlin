@@ -1,7 +1,6 @@
 import java.lang.IndexOutOfBoundsException
 import java.util.Random;
 import kotlin.math.max
-import kotlin.system.measureNanoTime
 import kotlin.system.measureTimeMillis
 
 val random = Random()
@@ -54,8 +53,8 @@ fun searchBestBehavior(megurimasu: MegurimasuSimulator, depth: Int, probability:
         return Pair(score["A"]!! - score["B"]!!, mapOf())
     }
 
-    // 次の手を列挙
-    val agentsAction = listOf("A_1", "A_2", "B_1", "B_2")
+    // 次の手を列挙(A)
+    val agentsActionA = listOf("A_1", "A_2")
             .map{ agentName ->
                 val bruteforce = strategyOfBruteForce(megurimasu, agentName, probability[0])
                 val stalker = strategyOfStalker(megurimasu, agentName, probability[1])
@@ -65,7 +64,23 @@ fun searchBestBehavior(megurimasu: MegurimasuSimulator, depth: Int, probability:
             }
             .toMap()
 
+    // 次の手を列挙(B)
+    val agentsActionB = listOf("B_1", "B_2")
+            .map{ agentName ->
+                val randBrute = random.nextInt(probability.sum())
+                val randStalker = probability.sum() - randBrute//random.nextInt(probability.sum() - randBrute)
+//                val randGod = probability.sum() - randBrute - randStalker
+
+                val bruteforce = strategyOfBruteForce(megurimasu, agentName, randBrute)
+                val stalker = strategyOfStalker(megurimasu, agentName, randStalker)
+//                val prayToGod = strategyOfPrayToGod(randGod)
+
+                agentName to bruteforce + stalker //+ prayToGod
+            }
+            .toMap()
+
     // それぞれのエージェントが選択した手を合わせて次の盤面を決める
+    val agentsAction = agentsActionA + agentsActionB
     val nextBehaviors = arrayListOf<Map<String, Int>>()
     val total = probability.sum()
     for(i: Int in 0 until total * total){
@@ -118,8 +133,8 @@ fun strategyOfBruteForce(megurimasu: MegurimasuSimulator, agentName: String, num
             var score = megurimasu.scoreData[actionY][actionX] + megurimasu.scoreData[actionYTwo][actionXTwo]
             when(megurimasu.encampmentData[actionY][actionX]){
                 0 -> { }
-                getTeamID(agentName) -> score -= 10
-                else -> {score -= 6; _i += 10}
+                getTeamID(agentName) -> score = 0
+                else -> {score -= 3; _i += 10}
             }
 
             // 最大値更新
