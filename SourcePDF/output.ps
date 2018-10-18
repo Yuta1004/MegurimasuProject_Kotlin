@@ -1,0 +1,1222 @@
+%!PS-Adobe-1.0
+%%Title: DataConversion.kt
+%%Creator: Id: a2ps,v 1.45 2001/05/28 07:25:46 utashiro Exp 
+%%CreationDate: Tue Oct 16 21:35:22 2018
+%%Pages: (atend)
+%%PageOrder: Ascend
+%%DocumentPaperSizes: A4
+%%Orientation: Portrait
+%%EndComments
+
+/$a2psdict 100 dict def
+$a2psdict begin
+% Initialize page description variables.
+/inch {72 mul} bind def
+%% SelectTray
+statusdict /a4tray known { statusdict begin a4tray end } if
+/landscape false def
+/twinpage false def
+/sheetheight 11.64 inch def
+/sheetwidth 8.27 inch def
+/lmargin 1.2 inch def
+/smargin 1.2 inch def
+/paper_adjust 0.05 inch def
+/noborder false def
+/noheader false def
+/headersize 0.29 inch def
+/nofooter false def
+/nopunchmark true def
+/bodyfontsize 9.8 def
+/kanjiAsciiRatio 1 def
+/lines 66 def
+/columns 85 def
+/date (Oct 16 2018 21:35) def
+/doasciimag false def
+%!  PostScript Source Code
+%
+%  File: imag:/users/local/a2ps/header.ps
+%  Created: Tue Nov 29 12:14:02 1988 by miguel@imag (Miguel Santana)
+%  Version: 2.0
+%  Description: PostScript prolog for a2ps ascii to PostScript program.
+% 
+%  Edit History:
+%  - Original version by evan@csli (Evan Kirshenbaum).
+%  - Modified by miguel@imag to:
+%    1) Correct an overflow bug when printing page number 10 (operator
+%	cvs).
+%    2) Define two other variables (sheetwidth, sheetheight) describing
+%	the physical page (by default A4 format).
+%    3) Minor changes (reorganization, comments, etc).
+%  - Modified by tullemans@apolloway.prl.philips.nl
+%    1) Correct stack overflows with regard to operators cvs and copy.
+%       The resulting substrings where in some cases not popped off 
+%       the stack, what can result in a stack overflow.
+%    2) Replaced copypage and erasepage by showpage. Page througput
+%       degrades severely (see red book page 140) on our ps-printer
+%       after printing sheet 16 (i.e. page 8) of a file which was 
+%       actually bigger. For this purpose the definitions of startdoc
+%       and startpage are changed.
+%  - Modified by Tim Clark <T.Clark@uk.ac.warwick> to:
+%    1) Print one page per sheet (portrait) as an option.
+%    2) Reduce size of file name heading, if it's too big.
+%    3) Save and restore PostScript state at begining/end. It now uses
+%	conventional %%Page %%Trailer markers.
+%    4) Print one wide page per sheet in landscape mode as an option.
+%  - Modified by miguel@imag.fr to
+%    1) Add new option to print n copies of a file.
+%    2) Add new option to suppress heading printing.
+%    3) Add new option to suppress page surrounding border printing.
+%    4) Add new option to change font size. Number of lines and columns
+%	are now automatically adjusted, depending on font size and
+%	printing mode used.
+%    5) Minor changes (best layout, usage message, etc).
+%  - Modified by kanazawa@sra.co.jp to:
+%    1) Handle Japanese code
+%  - Modified by utashiro@sra.co.jp to:
+%    1) Fix bug in printing long label
+%    2) Handle carriage-return
+%    3) Specify kanji-ascii character retio
+%    4) Add footer label
+%    5) Change filename->fname becuase ghostscript has operator filename
+%    6) Support three different font style
+%    7) Incorporate B4 paper support and punchmark contributed
+%       by Masami Ueno <cabbage@kki.esi.yamanashi.ac.jp>
+%
+
+% Copyright (c) 1988, Miguel Santana, miguel@imag.imag.fr
+%
+% Permission is granted to copy and distribute this file in modified
+% or unmodified form, for noncommercial use, provided (a) this copyright
+% notice is preserved, (b) no attempt is made to restrict redistribution
+% of this file, and (c) this file is not distributed as part of any
+% collection whose redistribution is restricted by a compilation copyright.
+%
+
+
+% General macros.
+/xdef {exch def} bind def
+/getfont {exch findfont exch scalefont} bind def
+
+% Page description variables and inch function are defined by a2ps program.
+
+% Character size for differents fonts.
+   landscape
+   { /filenamefontsize 12 def }
+   { /filenamefontsize 16 def }
+ifelse
+/datefontsize filenamefontsize 0.8 mul def
+/headermargin filenamefontsize 0.25 mul def
+/bodymargin bodyfontsize 0.7 mul def
+
+% Font assignment to differents kinds of "objects"
+/filenamefontname /Helvetica-Bold def
+/stdfilenamefont filenamefontname filenamefontsize getfont def
+/datefont /Helvetica datefontsize getfont def
+/footerfont /Helvetica-Bold datefontsize getfont def
+/mag { doasciimag { [ 1 0 0 asciimagsize 0 0 ] makefont } if } def
+/bodynfont /Courier bodyfontsize getfont mag def
+/bodybfont /Courier-Bold bodyfontsize getfont mag def
+/bodyofont /Courier-BoldOblique bodyfontsize getfont mag def
+/fontarray [ bodynfont bodybfont bodyofont ] def
+/bodyfont bodynfont def
+
+% Initializing kanji fonts
+/kanji_initialized false def
+/kanji_init {
+   kanji_initialized not
+   {
+      /bodykfontsize bodyfontsize kanjiAsciiRatio mul def
+      /bodyknfont /Ryumin-Light-H bodykfontsize getfont def
+      /bodykbfont /GothicBBB-Medium-H bodykfontsize getfont def
+      /bodykofont bodykbfont [ 1 0 .2 1 0 0 ] makefont def
+      /KanjiRomanDiff 1.2 bodyfontsize mul 1.0 bodykfontsize mul sub def
+      /KanjiRomanDiffHalf KanjiRomanDiff 2 div def
+      /kfontarray [ bodyknfont bodykbfont bodykofont ] def
+      /kanji_initialized true def
+   } if
+} def
+
+% Backspace width
+/backspacewidth
+   bodyfont setfont (0) stringwidth pop
+   def
+
+% Logical page attributs (a half of a real page or sheet).
+/pagewidth
+   bodyfont setfont (0) stringwidth pop columns mul bodymargin dup add add
+   def
+/pageheight
+   bodyfontsize 1.1 mul lines mul bodymargin dup add add headersize add
+   def
+
+% Coordinates for upper corner of a logical page and for sheet number.
+% Coordinates depend on format mode used.
+% In twinpage mode, coordinate x of upper corner is not the same for left
+% and right pages: upperx is an array of two elements, indexed by sheetside.
+/rightmargin smargin 3 div def
+/leftmargin smargin 2 mul 3 div def
+/topmargin lmargin twinpage {3} {2} ifelse div def
+landscape
+{  % Landscape format
+   /punchx .4 inch def           % for PunchMark
+   /punchy sheetwidth 2 div def  % for PunchMark
+   /uppery rightmargin pageheight add bodymargin add def
+   /sheetnumbery sheetwidth leftmargin pageheight add datefontsize add sub def
+   twinpage
+   {  % Two logical pages
+      /upperx [ topmargin 2 mul			% upperx for left page
+		dup topmargin add pagewidth add	% upperx for right page
+	      ] def
+      /sheetnumberx sheetheight topmargin 2 mul sub def
+   }
+   {  /upperx [ topmargin dup ] def
+      /sheetnumberx sheetheight topmargin sub datefontsize sub def
+   }
+   ifelse
+}
+{  % Portrait format
+   /punchx .3 inch def
+   /punchy sheetheight 2 div def
+   /uppery topmargin pageheight add def
+   /upperx [ leftmargin dup ] def
+   /sheetnumberx sheetwidth rightmargin sub datefontsize sub def
+   /sheetnumbery
+	 sheetheight 
+	 topmargin pageheight add datefontsize add headermargin add
+      sub
+      def
+}
+ifelse
+
+% Strings used to make easy printing numbers
+/pnum 12 string def
+/empty 12 string def
+
+% Other initializations.
+datefont setfont
+/datewidth date stringwidth pop def
+/pagenumwidth (Page 999) stringwidth pop def
+/filenameroom
+         pagewidth
+	 filenamefontsize 4 mul datewidth add pagenumwidth add
+      sub
+   def
+
+
+% Function startdoc: initializes printer and global variables.
+/startdoc
+    { /sheetside 0 def			% sheet side that contains current page
+   } bind def
+
+% Function setlabel: initialize label in header
+/setlabel
+    { stdfilenamefont setfont
+      /fname xdef
+      /filenamewidth fname stringwidth pop def
+      /filenamefont
+	 filenamewidth filenameroom gt
+	 {
+	       filenamefontname
+	       filenamefontsize filenameroom mul filenamewidth div
+	    getfont
+	 }
+	 {  stdfilenamefont }
+	 ifelse
+	 def
+    } bind def
+
+% Function printpage: Print a physical page.
+/printpage
+    { /sheetside 0 def
+      twinpage
+      {  sheetnumber }
+      {  noheader noborder not and
+	    { sheetnumber }
+	 if
+      }
+      ifelse
+      showpage 
+%      pagesave restore
+%      /sheet sheet 1 add def
+    } bind def
+
+% Function cleanup: terminates printing, flushing last page if necessary.
+/cleanup
+    { twinpage sheetside 1 eq and
+         { printpage }
+      if
+    } bind def
+
+%
+% Function startpage: prints page header and page border and initializes
+% printing of the file lines.  Page number is stored on the top of stack,
+% and file name is next.
+/startpage
+    { /pagenum exch def
+      sheetside 0 eq
+	{ % /pagesave save def
+	  landscape
+	    { sheetwidth 0 inch translate	% new coordinates system origin
+	      90 rotate				% landscape format
+	      paper_adjust neg 0 translate
+	    } if
+	} if
+      noborder not { printborder } if
+      noheader not { printheader } if
+      nofooter not { printfooter } if
+      nopunchmark not { punchmark } if
+	 upperx sheetside get  bodymargin  add
+	    uppery
+	    bodymargin bodyfontsize add  noheader {0} {headersize} ifelse  add
+	 sub
+      moveto
+    } bind def
+
+% Function printheader: prints page header.
+/printheader
+    { upperx sheetside get  uppery headersize sub 1 add  moveto
+      datefont setfont
+      gsave
+        datefontsize headermargin rmoveto
+	date show					% date/hour
+      grestore
+      gsave
+	pagenum pnum cvs pop
+	   pagewidth pagenumwidth sub
+	   headermargin
+	rmoveto
+        (Page ) show pnum show				% page number
+      grestore
+      empty pnum copy pop
+      gsave
+        filenamefont setfont
+	      filenameroom fname stringwidth pop sub 2 div datewidth add
+	      filenamefontsize 2 mul 
+	   add 
+	   headermargin
+	rmoveto
+        fname show						% file name
+      grestore
+    } bind def
+
+% Function printfooter: prints page footer.
+/printfooter
+    { upperx 0 get sheetnumbery moveto
+      footerfont setfont
+      fname show
+    } bind def
+
+% Function printborder: prints border page.
+/printborder 
+    { upperx sheetside get uppery moveto
+      gsave					% print the four sides
+        pagewidth 0 rlineto			% of the square
+        0 pageheight neg rlineto
+        pagewidth neg 0 rlineto
+        closepath stroke
+      grestore
+      noheader not
+         { 0 headersize neg rmoveto pagewidth 0 rlineto stroke }
+      if
+    } bind def
+
+% Punch Marker
+/punchmark {
+  gsave
+    newpath punchx punchy moveto
+    punchx 2 add punchy -0.5 add lineto
+    punchx 2 add punchy 0.5 add lineto
+    punchx punchy lineto
+    closepath
+    0 setgray .8 setlinewidth stroke
+  grestore
+  } bind def
+
+%
+% Function endpage: adds a sheet number to the page (footnote) and prints
+% the formatted page (physical impression). Activated at the end of each
+% source page (lines reached or FF character).
+/endpage
+   { twinpage  sheetside 0 eq  and
+        { /sheetside 1 def }
+        { printpage }
+     ifelse
+   } bind def
+
+% Function sheetnumber: prints the sheet number.
+/sheetnumber
+    { sheetnumberx sheetnumbery moveto
+      datefont setfont
+      sheet pnum cvs
+	 dup stringwidth pop (0) stringwidth pop sub neg 0 rmoveto show
+      empty pnum copy pop
+    } bind def
+
+% Function bs: go back one character width to emulate BS
+/bs { backspacewidth neg 0 rmoveto } bind def
+
+% Function s: print a source string
+/s  { fontarray fonttype get setfont
+      show
+    } bind def
+
+% Function ks: print a kanji source string
+/ks { kfontarray fonttype get setfont
+      KanjiRomanDiffHalf 0 rmoveto
+      KanjiRomanDiff 0 3 -1 roll ashow
+      KanjiRomanDiffHalf neg 0 rmoveto
+    } def
+
+% Function bl: beginning of line
+/bl { gsave } bind def
+
+% Function nl: newline
+/nl {
+      grestore
+      0 bodyfontsize 1.1 mul neg rmoveto
+    } bind def
+
+% Function cr: carriage return
+/cr { grestore } bind def
+
+% Function hlr: half-line up
+/hlr { 0 bodyfontsize 0.55 mul rmoveto } bind def
+
+% Function hlr: half-line down
+/hlf { 0 bodyfontsize 0.55 mul neg rmoveto } bind def
+
+% Function hlr: half-character backward
+/hcr { backspacewidth 2 div neg 0 rmoveto } bind def
+
+% Function hlr: half-character forward
+/hcf { backspacewidth 2 div 0 rmoveto } bind def
+
+/R { /fonttype 0 def } bind def
+/B { /fonttype 1 def } bind def
+/I { /fonttype 2 def } bind def
+R
+/docsave save def
+startdoc
+%%EndProlog
+
+%%Page: 1 1
+/sheet 1 def
+(DataConversion.kt) setlabel
+1 startpage
+bl (1     ) s (class DataConversion {) s nl
+bl (2     ) s (    companion object {) s nl
+bl (3     ) s (        fun conversion\(scoreData: Array<Array<Int>>, encampmentData: Array<Arra) s nl
+bl (      ) s (y<Int>>, agents: Map<String, MegurimasuSimulator.Agent>\): String {) s nl
+bl (4     ) s (            var conversionStr = "") s nl
+bl (5     ) s (            val width = scoreData[0].size) s nl
+bl (6     ) s (            val height = scoreData.size) s nl
+bl (7     ) s nl
+bl (8     ) s (            // ) s kanji_init (%9%F!<%8%G!<%?) ks (\() s (I}!$9b$5) ks (\)) s nl
+bl (9     ) s (            conversionStr = "${width.toString\(36\)}:${height.toString\(36\)}:") s nl
+bl (10    ) s nl
+bl (11    ) s (            // ) s (?XCO%G!<%?) ks nl
+bl (12    ) s (            encampmentData.forEach { array ->) s nl
+bl (13    ) s (                val binStr = array) s nl
+bl (14    ) s (                        .map{ String.format\("%2s", it.toString\(2\)\).replace\(" ",) s nl
+bl (      ) s ( "0"\) }) s nl
+bl (15    ) s (                        .reduce { s1, s2 -> s1 + s2 }) s nl
+bl (16    ) s (                conversionStr += Integer.parseInt\(binStr, 2\).toString\(36\) + ":") s nl
+bl (17    ) s (            }) s nl
+bl (18    ) s nl
+bl (19    ) s (            // ) s (%\(!<%8%'%s%H%G!<%?) ks nl
+bl (20    ) s (            conversionStr += agents) s nl
+bl (21    ) s (                    .map{ it.value.x.toString\(36\) + it.value.y.toString\(36\) + ") s nl
+bl (      ) s (:" }) s nl
+bl (22    ) s (                    .reduce { s1, s2 -> "$s1$s2" }) s nl
+bl (23    ) s nl
+bl (24    ) s (            return conversionStr) s nl
+bl (25    ) s (        }) s nl
+bl (26    ) s nl
+bl (27    ) s (        @Suppress\("UNCHECKED_CAST"\)) s nl
+bl (28    ) s (        fun deconversion\(target: String\): Map<String, Any>{) s nl
+bl (29    ) s (            val splitTarget = target.split\(":"\)) s nl
+bl (30    ) s nl
+bl (31    ) s (            // ) s (%9%F!<%8>pJs) ks (\() s (I}!$9b$5) ks (\)) s nl
+bl (32    ) s (            val width = numAtoB\(splitTarget[0], 36, 10\)) s nl
+bl (33    ) s (            val height = numAtoB\(splitTarget[1], 36, 10\)) s nl
+bl (34    ) s nl
+bl (35    ) s (            // ) s (?XCO%G!<%?) ks nl
+bl (36    ) s (            // 36) s (?J?t$r) ks (2) s (?J?t$KJQ49$7$?8e!$) ks (2) s (8D$:$D?t;z$rO"7k$7$F$=$l$r) ks (10) s (?J?t$KD>) ks nl
+bl (      ) s ($9) ks nl
+bl (37    ) s (            val encampmentData = Array\(height\) { _ -> Array\(width\){0}}) s nl
+bl (38    ) s (            for\(i in 0 until height\){) s nl
+bl (39    ) s (                var binStr = Integer.parseInt\(splitTarget[i+2], 36\).toString\(2\)) s nl
+bl (40    ) s (                binStr = String.format\("%"+\(width*2\)+"s", binStr\).replace\(" ", ) s nl
+bl (      ) s ("0"\)) s nl
+bl (41    ) s nl
+bl (42    ) s (                for\(charIdx in 0 until width*2 step 2\){) s nl
+bl (43    ) s (                    encampmentData[i][charIdx/2] = "${binStr[charIdx]}${binStr[) s nl
+bl (      ) s (charIdx+1]}".toInt\(2\)) s nl
+bl (44    ) s (                }) s nl
+bl (45    ) s (            }) s nl
+bl (46    ) s nl
+bl (47    ) s (            // ) s (%\(!<%8%'%s%H%G!<%?) ks nl
+bl (48    ) s (            // ) s ($=$l$>$l$NBP1~7e$r<h$j=P$9) ks nl
+bl (49    ) s (            val agentPos = mutableMapOf<String, Array<Int>>\(\)) s nl
+bl (50    ) s (            val agentNames = listOf\("A_1", "A_2", "B_1", "B_2"\)) s nl
+bl (51    ) s (            for\(i in 0 until 4\){) s nl
+bl (52    ) s (                val agent = splitTarget[i+height+2]) s nl
+bl (53    ) s (                val agentX = numAtoB\(agent[0].toString\(\), 36, 10\)) s nl
+bl (54    ) s (                val agentY = numAtoB\(agent[1].toString\(\), 36, 10\)) s nl
+bl (55    ) s (                agentPos[agentNames[i]] = arrayOf\(agentX, agentY\)) s nl
+bl (56    ) s (            }) s nl
+bl (57    ) s nl
+bl (58    ) s (            return mapOf\() s nl
+bl (59    ) s (                    "width" to width,) s nl
+bl (60    ) s (                    "height" to height,) s nl
+
+endpage
+cleanup
+%%Page: 2 2
+/sheet 2 def
+(DataConversion.kt) setlabel
+2 startpage
+bl (61    ) s (                    "encampmentData" to encampmentData,) s nl
+bl (62    ) s (                    "agentPos" to agentPos) s nl
+bl (63    ) s (            \)) s nl
+bl (64    ) s (        }) s nl
+bl (65    ) s nl
+bl (66    ) s (        private fun numAtoB\(numStr: String, A: Int, B:Int\): Int{) s nl
+bl (67    ) s (            return Integer.parseInt\(numStr, A\).toString\(B\).toInt\(\)) s nl
+bl (68    ) s (        }) s nl
+bl (69    ) s (    }) s nl
+bl (70    ) s (}) s
+endpage
+cleanup
+%%Page: 1 3
+/sheet 1 def
+(MegurimasuMain.kt) setlabel
+1 startpage
+bl (1     ) s (var qrData: String? = null) s nl
+bl (2     ) s (var posData: String? = null) s nl
+bl (3     ) s (var depth = 3) s nl
+bl (4     ) s (var probability = arrayOf\(4, 1, 0\)) s nl
+bl (5     ) s nl
+bl (6     ) s (fun main\(args: Array<String>\){) s nl
+bl (7     ) s (    TCPConnectionManager\("localhost", 6666, ::tcpReceiver\).receiveStart\(\)) s nl
+bl (8     ) s nl
+bl (9     ) s (    // QR) s kanji_init (%G!<%?BT5!) ks nl
+bl (10    ) s (    println\("Please Input QR Data"\)) s nl
+bl (11    ) s (    while\(qrData == null\){ Thread.sleep\(5\) }) s nl
+bl (12    ) s (    println\("Received QR Data"\)) s nl
+bl (13    ) s nl
+bl (14    ) s (    // ) s (%9%3%"%G!<%?$H%\(!<%8%'%s%H=i4|0LCV<hF@) ks nl
+bl (15    ) s (    val qrParser = QRParser\(qrData!!\)) s nl
+bl (16    ) s (    val scoreData = qrParser.getScoreData\(\)) s nl
+bl (17    ) s (    val agentPos = qrParser.getAgentPos\(\)) s nl
+bl (18    ) s nl
+bl (19    ) s (    // MegurimasuSimulator) s (=i4|2=) ks nl
+bl (20    ) s (    val megurimasu = MegurimasuSimulator\(agentPos, scoreData\)) s nl
+bl (21    ) s nl
+bl (22    ) s (    // ) s (;W9M%k!<%W) ks nl
+bl (23    ) s (    val doLoop = true) s nl
+bl (24    ) s (    while\(doLoop\){) s nl
+bl (25    ) s (        // ) s (:GA1<jC5:w) ks nl
+bl (26    ) s (        println\("Searching Best Behavior..."\)) s nl
+bl (27    ) s (        val \(maxScore, bestBehavior\) = searchBestBehavior\(megurimasu, depth, pr) s nl
+bl (      ) s (obability\)) s nl
+bl (28    ) s (        printInfo\(maxScore, bestBehavior, megurimasu\)) s nl
+bl (29    ) s nl
+bl (30    ) s (        // ) s (Aj<j$N9TF0$,F~NO$5$l$k$N$rBT5!) ks nl
+bl (31    ) s (        println\("Please Input Opponent Action"\)) s nl
+bl (32    ) s (        posData = "Waiting") s nl
+bl (33    ) s (        while\(posData == "Waiting"\){ Thread.sleep\(5\) }) s nl
+bl (34    ) s (        println\("Received Opponent Action Data"\)) s nl
+bl (35    ) s nl
+bl (36    ) s (        // ) s (Aj<j$N9TF0$r<hF@) ks nl
+bl (37    ) s (        val agentB1Action = posData!!.split\(":"\)[0].toInt\(\)) s nl
+bl (38    ) s (        val agentB2Action = posData!!.split\(":"\)[1].toInt\(\)) s nl
+bl (39    ) s (        posData = null) s nl
+bl (40    ) s nl
+bl (41    ) s (        println\("$agentB1Action, $agentB2Action"\)) s nl
+bl (42    ) s nl
+bl (43    ) s (        // ) s (>lLL99?7) ks nl
+bl (44    ) s (        val behavior = mapOf\() s nl
+bl (45    ) s (                "A_1" to bestBehavior["A_1"]!!, "A_2" to bestBehavior["A_2"]!!,) s nl
+bl (46    ) s (                "B_1" to agentB1Action, "B_2" to agentB2Action) s nl
+bl (47    ) s (        \)) s nl
+bl (48    ) s (        megurimasu.action\(behavior\)) s nl
+bl (49    ) s (    }) s nl
+bl (50    ) s (}) s nl
+bl (51    ) s nl
+bl (52    ) s (fun printInfo\( maxScore: Int, bestBehavior: Map<String, Int>, megurimasu: Megur) s nl
+bl (      ) s (imasuSimulator\){) s nl
+bl (53    ) s (    println\(\)) s nl
+bl (54    ) s (    println\("---"\)) s nl
+bl (55    ) s (    println\("BestBehavior: A -> ${bestBehavior["A_1"]}, B -> ${bestBehavior["A_) s nl
+bl (      ) s (2"]}"\)) s nl
+bl (56    ) s (    println\("MaxScore: $maxScore"\)) s nl
+bl (57    ) s (    println\("EncampmentData: "\)) s nl
+bl (58    ) s (    megurimasu.encampmentData.forEach { it.forEach { print\("$it "\) }; println\(\)) s nl
+bl (      ) s ( }) s nl
+bl (59    ) s (    println\("AgentPos: "\)) s nl
+bl (60    ) s (    megurimasu.agents.forEach { key, pos -> println\("$key -> \(${pos.x}, ${pos.y) s nl
+bl (      ) s (}\)"\) }) s nl
+bl (61    ) s (    println\("Score: A ${megurimasu.calScore\(\)["A"]} vs ${megurimasu.calScore\(\)[) s nl
+
+endpage
+cleanup
+%%Page: 2 4
+/sheet 2 def
+(MegurimasuMain.kt) setlabel
+2 startpage
+bl (      ) s ("B"]} B"\)) s nl
+bl (62    ) s (    println\("---"\)) s nl
+bl (63    ) s (}) s nl
+bl (64    ) s nl
+bl (65    ) s (fun tcpReceiver\(text: String\) {) s nl
+bl (66    ) s (    if\(text == "close"\){ System.exit\(0\) }) s nl
+bl (67    ) s nl
+bl (68    ) s (    val dividedText = text.split\("@"\)) s nl
+bl (69    ) s (    val type = dividedText[0]) s nl
+bl (70    ) s (    val data = dividedText[1]) s nl
+bl (71    ) s nl
+bl (72    ) s (    when\(type\){) s nl
+bl (73    ) s (        "QRData" -> qrData = data) s nl
+bl (74    ) s (        "OpponentPos" ->{) s nl
+bl (75    ) s (            if\(posData != "Waiting"\){ return }) s nl
+bl (76    ) s (            posData = data) s nl
+bl (77    ) s (            println\("Input"\)) s nl
+bl (78    ) s (        }) s nl
+bl (79    ) s (    }) s nl
+bl (80    ) s (}) s
+endpage
+cleanup
+%%Page: 1 5
+/sheet 1 def
+(MegurimasuSimulator.kt) setlabel
+1 startpage
+bl (1     ) s (import kotlin.math.abs) s nl
+bl (2     ) s nl
+bl (3     ) s (class MegurimasuSimulator\(agentInitPos: Map<String, Array<Int>>, var scoreData:) s nl
+bl (      ) s ( Array<Array<Int>>\){) s nl
+bl (4     ) s (    private var width = scoreData[0].size) s nl
+bl (5     ) s (    private var height = scoreData.size) s nl
+bl (6     ) s (    var agents = agentInit\(agentInitPos\)) s nl
+bl (7     ) s (    var encampmentData = arrayOf<Array<Int>>\(\)) s nl
+bl (8     ) s nl
+bl (9     ) s (    inner class Agent\(private val agentName: String, var x: Int, var y: Int\) {) s nl
+bl (10    ) s (        fun action\(type: Int\): Boolean {) s nl
+bl (11    ) s (            if\(!canAction\(type\)\) return false) s nl
+bl (12    ) s nl
+bl (13    ) s (            when\(type\){) s nl
+bl (14    ) s (                // ) s kanji_init (0\\F0) ks nl
+bl (15    ) s (                in 0..7 ->{) s nl
+bl (16    ) s (                    val movedValues = takeActionPos\(type\)) s nl
+bl (17    ) s (                    x = movedValues["x"]!!) s nl
+bl (18    ) s (                    y = movedValues["y"]!!) s nl
+bl (19    ) s (                    encampmentData[y][x] = getTeamID\(agentName\)) s nl
+bl (20    ) s (                }) s nl
+bl (21    ) s (                // ) s (%Q%M%k=|5n) ks nl
+bl (22    ) s (                in 10..17 ->{) s nl
+bl (23    ) s (                    val movedValues = takeActionPos\(type\)) s nl
+bl (24    ) s (                    encampmentData[movedValues["y"]!!][movedValues["x"]!!] = 0) s nl
+bl (25    ) s (                }) s nl
+bl (26    ) s (            }) s nl
+bl (27    ) s nl
+bl (28    ) s (            return true) s nl
+bl (29    ) s (        }) s nl
+bl (30    ) s nl
+bl (31    ) s (        private fun canAction\(type: Int\): Boolean {) s nl
+bl (32    ) s (            if\(type !in 0..8 && type !in 10..18\) return false) s nl
+bl (33    ) s nl
+bl (34    ) s (            val \(xCopy, yCopy\) = getActionPos\(x, y, type%10\)) s nl
+bl (35    ) s nl
+bl (36    ) s (            if\(!isWithInRange\(xCopy, yCopy\)\){ return false }) s nl
+bl (37    ) s (            val encampment = encampmentData[yCopy][xCopy]) s nl
+bl (38    ) s nl
+bl (39    ) s (            when\(type\){) s nl
+bl (40    ) s (                // ) s (0\\F0$N>l9g) ks (: ) s (0\\F0@h$,E\($N?XCO$G$"$l$P) ks (\(=) s (<+J,$N?XCO$G$J$$$+$D6u) ks nl
+bl (      ) s (Gr$G$O$J$$) ks (\)) s (>l9g$O0\\F0IT5v2D) ks nl
+bl (41    ) s (                in 0..8 -> {) s nl
+bl (42    ) s (                    if\(encampment != getTeamID\(agentName\) && encampment != 0\){ ) s nl
+bl (      ) s (return false }) s nl
+bl (43    ) s (                }) s nl
+bl (44    ) s nl
+bl (45    ) s (                // ) s (%Q%M%k=|5n$N>l9g) ks (: ) s (0\\F0@h$,6uGr$N>l9g$O=|5nIT5v2D) ks nl
+bl (46    ) s (                else -> if\(encampment == 0\){ return false }) s nl
+bl (47    ) s (            }) s nl
+bl (48    ) s nl
+bl (49    ) s (            return true) s nl
+bl (50    ) s (        }) s nl
+bl (51    ) s nl
+bl (52    ) s (        fun takeActionPos\(type: Int\): Map<String, Int>{) s nl
+bl (53    ) s (            // type) s ($,HO0O30$G$"$C$?$j9TF0$G$-$J$+$C$?$j$9$k>l9g$O7W;;$;$:$KJV$9) ks nl
+bl (54    ) s (            if\(type !in 0..8 && type !in 10..18\){ return mapOf\("x" to 0, "y" to) s nl
+bl (      ) s ( 0\) }) s nl
+bl (55    ) s (            if\(!canAction\(type\)\){ return mapOf\("x" to x, "y" to y\)}) s nl
+bl (56    ) s nl
+bl (57    ) s (            val \(retX, retY\) = getActionPos\(x, y, type%10\)) s nl
+bl (58    ) s (            return mapOf\("x" to retX, "y" to retY\)) s nl
+bl (59    ) s (        }) s nl
+bl (60    ) s (    }) s nl
+bl (61    ) s nl
+bl (62    ) s (    init{) s nl
+
+endpage
+cleanup
+%%Page: 2 6
+/sheet 2 def
+(MegurimasuSimulator.kt) setlabel
+2 startpage
+bl (63    ) s (        // ) s kanji_init (HWLL=i4|2=) ks nl
+bl (64    ) s (        encampmentData = Array\(scoreData.size\) { _ -> Array\(scoreData[0].size\) ) s nl
+bl (      ) s ({0}}) s nl
+bl (65    ) s (        agents.forEach { key, pos ->) s nl
+bl (66    ) s (            encampmentData[pos.y][pos.x] = getTeamID\(key\)) s nl
+bl (67    ) s (        }) s nl
+bl (68    ) s (    }) s nl
+bl (69    ) s nl
+bl (70    ) s (    private fun agentInit\(agentInitPos: Map<String, Array<Int>>\): Map<String, A) s nl
+bl (      ) s (gent>{) s nl
+bl (71    ) s (        val agents = mutableMapOf<String, Agent>\(\)) s nl
+bl (72    ) s (        agentInitPos.forEach { key, pos ->) s nl
+bl (73    ) s (            agents[key] = Agent\(key, pos[0], pos[1]\)) s nl
+bl (74    ) s (        }) s nl
+bl (75    ) s nl
+bl (76    ) s (        return agents) s nl
+bl (77    ) s (    }) s nl
+bl (78    ) s nl
+bl (79    ) s (    fun action\(behavior: Map<String, Int>\){) s nl
+bl (80    ) s (        // ) s (9TF08e$N:BI8$r<hF@$9$k) ks nl
+bl (81    ) s (        val takeActionPositions = mutableMapOf<String, Int>\(\)) s nl
+bl (82    ) s (        actionSimulation\(behavior\).forEach { agentName, pos ->) s nl
+bl (83    ) s (            takeActionPositions[agentName] = pos["x"]!!*100 + pos["y"]!!) s nl
+bl (84    ) s (        }) s nl
+bl (85    ) s nl
+bl (86    ) s (        // ) s (%\(!<%8%'%s%H$r9TF0$5$;$k) ks (\() s (=EJ#$7$F$J$$$+$D>r7o$rK~$?$7$?$b$N$@$1) ks (\)) s nl
+bl (87    ) s (        duplicateDetection\(takeActionPositions\)) s nl
+bl (88    ) s (                .forEach { agentName, isDuplicate ->) s nl
+bl (89    ) s (                    if\(isDuplicate || !agents.containsKey\(agentName\) || !behavi) s nl
+bl (      ) s (or.containsKey\(agentName\)\) {) s nl
+bl (90    ) s (                        return@forEach) s nl
+bl (91    ) s (                    }) s nl
+bl (92    ) s (                    agents[agentName]!!.action\(behavior[agentName]!!\)) s nl
+bl (93    ) s (                }) s nl
+bl (94    ) s (    }) s nl
+bl (95    ) s nl
+bl (96    ) s (    private fun actionSimulation\(behavior: Map<String, Int>\): Map<String, Map<S) s nl
+bl (      ) s (tring, Int>>{) s nl
+bl (97    ) s (        val takeActionPositions = mutableMapOf<String, Map<String, Int>>\(\)) s nl
+bl (98    ) s (        behavior.forEach { agentName, type ->) s nl
+bl (99    ) s (            if\(!agents.containsKey\(agentName\)\){ return@forEach }) s nl
+bl (100   ) s (            takeActionPositions[agentName] = agents[agentName]!!.takeActionPos\() s nl
+bl (      ) s (type\)) s nl
+bl (101   ) s (        }) s nl
+bl (102   ) s nl
+bl (103   ) s (        return takeActionPositions) s nl
+bl (104   ) s (    }) s nl
+bl (105   ) s nl
+bl (106   ) s (    private fun duplicateDetection\(target: Map<String, Int>\): Map<String, Boole) s nl
+bl (      ) s (an>{) s nl
+bl (107   ) s (        // ) s (=EJ#$,$"$l$P) ks (duplicateCheckMap) s ($NCM$,) ks (true) s ($K$J$k) ks nl
+bl (108   ) s (        val duplicateCheckMap = mutableMapOf<String, Boolean>\(\)) s nl
+bl (109   ) s (        target.forEach { agentName, value ->) s nl
+bl (110   ) s (            duplicateCheckMap[agentName] = target.count { it.value == value} >=) s nl
+bl (      ) s ( 2) s nl
+bl (111   ) s (        }) s nl
+bl (112   ) s nl
+bl (113   ) s (        return duplicateCheckMap) s nl
+bl (114   ) s (    }) s nl
+bl (115   ) s nl
+bl (116   ) s (    fun calScore\(\): Map<String, Int>{) s nl
+bl (117   ) s (        val score = mutableMapOf\("A" to 0, "B" to 0\)) s nl
+bl (118   ) s (        var flatScoreDara = scoreData.flatten\(\).toIntArray\(\)) s nl
+bl (119   ) s nl
+bl (120   ) s (        // ) s (%Q%M%k%9%3%") ks nl
+bl (121   ) s (        score.forEach { key, _ ->) s nl
+
+endpage
+cleanup
+%%Page: 3 7
+/sheet 3 def
+(MegurimasuSimulator.kt) setlabel
+3 startpage
+bl (122   ) s (            val teamID = getTeamID\(key\)) s nl
+bl (123   ) s (            score[key] = flatScoreDara) s nl
+bl (124   ) s (                    .filterIndexed { idx, _ -> encampmentData[idx/width][idx%wi) s nl
+bl (      ) s (dth] == teamID; }) s nl
+bl (125   ) s (                    .sum\(\)) s nl
+bl (126   ) s (        }) s nl
+bl (127   ) s nl
+bl (128   ) s (        // ) s kanji_init (?XCO%9%3%") ks nl
+bl (129   ) s (        flatScoreDara = flatScoreDara.map { abs\(it\) }.toIntArray\(\)) s nl
+bl (130   ) s (        arrayOf\("A", "B"\).forEach { teamIDStr ->) s nl
+bl (131   ) s (            var fillEncampment: Array<Array<Int>>? = Array\(height\) { _ -> Array) s nl
+bl (      ) s (\(width\){0} }) s nl
+bl (132   ) s (            val teamID = getTeamID\(teamIDStr\)) s nl
+bl (133   ) s nl
+bl (134   ) s (            // ) s (30<~$r=|$$$?A4$F$N:BI8$r5/E@$H$7$F?XCOC5:w$r$9$k) ks (\() s (:F5") ks (\)) s nl
+bl (135   ) s (            for\(y in 1 until height-1\){) s nl
+bl (136   ) s (                for\(x in 1 until width-1\) {) s nl
+bl (137   ) s (                    if\(fillEncampment!![y][x] == 1 || encampmentData[y][x] == t) s nl
+bl (      ) s (eamID\){ continue }) s nl
+bl (138   ) s nl
+bl (139   ) s (                    // ) s (C5:w7k2L$,) ks (null) s ($J$iC5:w<:GT!$) ks (fillEncampment) s ($r85$KLa$9) ks nl
+bl (140   ) s (                    val copyFillEncampment = fillEncampment.map{ it.clone\(\) }.t) s nl
+bl (      ) s (oTypedArray\(\)) s nl
+bl (141   ) s (                    fillEncampment = recursionSearch\(x, y, teamID, fillEncampme) s nl
+bl (      ) s (nt\)?: copyFillEncampment) s nl
+bl (142   ) s (                }) s nl
+bl (143   ) s (            }) s nl
+bl (144   ) s nl
+bl (145   ) s (            // ) s (C5:w7k2L$r%9%3%"$KH?1G) ks nl
+bl (146   ) s (            val encScore = flatScoreDara) s nl
+bl (147   ) s (                    .filterIndexed { idx, _ -> fillEncampment!![idx/width][idx%) s nl
+bl (      ) s (width] == 1 }) s nl
+bl (148   ) s (                    .sum\(\)) s nl
+bl (149   ) s (            score[teamIDStr] = score[teamIDStr]!!.plus\(encScore\)) s nl
+bl (150   ) s (        }) s nl
+bl (151   ) s nl
+bl (152   ) s (        return score) s nl
+bl (153   ) s (    }) s nl
+bl (154   ) s nl
+bl (155   ) s (    private fun recursionSearch\(x: Int, y: Int, teamID: Int, argFillEncampment:) s nl
+bl (      ) s ( Array<Array<Int>>?\): Array<Array<Int>>?{) s nl
+bl (156   ) s (        if\(x == 0 || x == width-1 || y == 0 || y == height-1 || argFillEncampme) s nl
+bl (      ) s (nt == null\){) s nl
+bl (157   ) s (            return null) s nl
+bl (158   ) s (        }) s nl
+bl (159   ) s nl
+bl (160   ) s (        // ) s (C5:w:Q$_$K$9$k) ks nl
+bl (161   ) s (        argFillEncampment[y][x] = 1) s nl
+bl (162   ) s nl
+bl (163   ) s (        var fillEncampment = argFillEncampment) s nl
+bl (164   ) s (        val moveXList = listOf\(x, x, x-1, x+1\)) s nl
+bl (165   ) s (        val moveYList = listOf\(y-1, y+1, y, y\)) s nl
+bl (166   ) s nl
+bl (167   ) s (        for\(i in 0 until 4\){) s nl
+bl (168   ) s (            val _x = moveXList[i]) s nl
+bl (169   ) s (            val _y = moveYList[i]) s nl
+bl (170   ) s nl
+bl (171   ) s (            // ) s (0\\F0@h$,%9%F!<%8Fb) ks ( and ) s (C5:w@h$N>l=j$,<+J,$N?XCO$G$J$$) ks ( and ) s ($9$G$K) ks nl
+bl (      ) s (C5:w:Q$_$G$J$1$l$PC5:wB39T) ks nl
+bl (172   ) s (            // null) s ($,JV$C$F$-$?$i$=$N$^$^JV$9) ks nl
+bl (173   ) s (            if\(isWithInRange\(_x, _y\) && encampmentData[_y][_x] != teamID && fil) s nl
+bl (      ) s (lEncampment!![_y][_x] == 0\){) s nl
+bl (174   ) s (                fillEncampment = recursionSearch\(_x, _y, teamID, fillEncampment) s nl
+bl (      ) s (\)) s nl
+bl (175   ) s (                if\(fillEncampment == null\){ return null }) s nl
+bl (176   ) s (            }) s nl
+
+endpage
+cleanup
+%%Page: 4 8
+/sheet 4 def
+(MegurimasuSimulator.kt) setlabel
+4 startpage
+bl (177   ) s (        }) s nl
+bl (178   ) s nl
+bl (179   ) s (        return fillEncampment) s nl
+bl (180   ) s (    }) s nl
+bl (181   ) s nl
+bl (182   ) s (    private fun isWithInRange\(x: Int, y: Int\): Boolean{) s nl
+bl (183   ) s (        return \(x in 0..\(width - 1\)\) && \(y in 0..\(height-1\)\)) s nl
+bl (184   ) s (    }) s nl
+bl (185   ) s nl
+bl (186   ) s (    fun conversion\(\): String{) s nl
+bl (187   ) s (        return DataConversion.conversion\(scoreData, encampmentData, agents\)) s nl
+bl (188   ) s (    }) s nl
+bl (189   ) s nl
+bl (190   ) s (    @Suppress\("UNCHECKED_CAST"\)) s nl
+bl (191   ) s (    fun deconversion\(target: String\){) s nl
+bl (192   ) s (        val stageData = DataConversion.deconversion\(target\)) s nl
+bl (193   ) s nl
+bl (194   ) s (        width = stageData["width"] as Int) s nl
+bl (195   ) s (        height = stageData["height"] as Int) s nl
+bl (196   ) s (        encampmentData = stageData["encampmentData"] as Array<Array<Int>>) s nl
+bl (197   ) s (        agents = agentInit\(stageData["agentPos"] as Map<String, Array<Int>>\)) s nl
+bl (198   ) s (    }) s nl
+bl (199   ) s (}) s
+endpage
+cleanup
+%%Page: 1 9
+/sheet 1 def
+(QRParser.kt) setlabel
+1 startpage
+bl (1     ) s (class QRParser\(qrText: String\){) s nl
+bl (2     ) s (    private val qrData = qrText.split\(":"\)) s nl
+bl (3     ) s (    private val stageSizeInfo = qrData[0].split\(" "\)) s nl
+bl (4     ) s (    private val height = stageSizeInfo[0].toInt\(\)) s nl
+bl (5     ) s nl
+bl (6     ) s (    fun getAgentPos\(\): Map<String, Array<Int>>{) s nl
+bl (7     ) s (        // ) s kanji_init ($o$+$j$d$9$5$rM%@h$7$F%k!<%W$r;H$o$J$$) ks nl
+bl (8     ) s (        val agentA1Pos = qrData[height+1].split\(" "\)) s nl
+bl (9     ) s (        val agentA1PosY = agentA1Pos[0].toInt\(\) - 1) s nl
+bl (10    ) s (        val agentA1PosX = agentA1Pos[1].toInt\(\) - 1) s nl
+bl (11    ) s nl
+bl (12    ) s (        val agentA2Pos = qrData[height+2].split\(" "\)) s nl
+bl (13    ) s (        val agentA2PosY = agentA2Pos[0].toInt\(\) - 1) s nl
+bl (14    ) s (        val agentA2PosX = agentA2Pos[1].toInt\(\) - 1) s nl
+bl (15    ) s nl
+bl (16    ) s (        return mapOf\() s nl
+bl (17    ) s (                "A_1" to arrayOf\(agentA1PosX, agentA1PosY\),) s nl
+bl (18    ) s (                "A_2" to arrayOf\(agentA2PosX, agentA2PosY\),) s nl
+bl (19    ) s (                "B_1" to arrayOf\(agentA1PosX, agentA2PosY\),) s nl
+bl (20    ) s (                "B_2" to arrayOf\(agentA2PosX, agentA1PosY\)) s nl
+bl (21    ) s (        \)) s nl
+bl (22    ) s (    }) s nl
+bl (23    ) s nl
+bl (24    ) s (    fun getScoreData\(\): Array<Array<Int>>{) s nl
+bl (25    ) s (        val scoreData = arrayListOf<Array<Int>>\(\)) s nl
+bl (26    ) s nl
+bl (27    ) s (        qrData.forEachIndexed{ idx, line ->) s nl
+bl (28    ) s (            if\(idx == 0 || height < idx\){ return@forEachIndexed }) s nl
+bl (29    ) s nl
+bl (30    ) s (            val scoreLine = line) s nl
+bl (31    ) s (                    .split\(" "\)) s nl
+bl (32    ) s (                    .map { it -> it.toInt\(\) }) s nl
+bl (33    ) s (                    .toTypedArray\(\)) s nl
+bl (34    ) s (            scoreData.add\(scoreLine\)) s nl
+bl (35    ) s (        }) s nl
+bl (36    ) s nl
+bl (37    ) s (        return scoreData.toTypedArray\(\)) s nl
+bl (38    ) s (    }) s nl
+bl (39    ) s (}) s nl
+
+endpage
+cleanup
+%%Page: 1 10
+/sheet 1 def
+(ReadAheadSolver.kt) setlabel
+1 startpage
+bl (1     ) s (import java.lang.IndexOutOfBoundsException) s nl
+bl (2     ) s (import java.util.Random;) s nl
+bl (3     ) s (import kotlin.math.max) s nl
+bl (4     ) s (import kotlin.system.measureTimeMillis) s nl
+bl (5     ) s nl
+bl (6     ) s (val random = Random\(\)) s nl
+bl (7     ) s nl
+bl (8     ) s (// ) s kanji_init (:F5"$G$h$jNI$$<j$rC5$9) ks nl
+bl (9     ) s (fun searchBestBehavior\(megurimasu: MegurimasuSimulator, depth: Int, probability) s nl
+bl (      ) s (: Array<Int>\): Pair<Int, Map<String, Int>>{) s nl
+bl (10    ) s (    // ) s (MU$J$i%9%3%"$r7W;;$7$FJV$9) ks nl
+bl (11    ) s (    if\(depth == 0\){) s nl
+bl (12    ) s (        val score = megurimasu.calScore\(\)) s nl
+bl (13    ) s (        return Pair\(score["A"]!! - score["B"]!!, mapOf\(\)\)) s nl
+bl (14    ) s (    }) s nl
+bl (15    ) s nl
+bl (16    ) s (    // ) s (<!$N<j$rNs5s) ks (\(A\)) s nl
+bl (17    ) s (    val agentsActionA = listOf\("A_1", "A_2"\)) s nl
+bl (18    ) s (            .map{ agentName ->) s nl
+bl (19    ) s (                val bruteforce = strategyOfBruteForce\(megurimasu, agentName, pr) s nl
+bl (      ) s (obability[0]\)) s nl
+bl (20    ) s (                val stalker = strategyOfStalker\(megurimasu, agentName, probabil) s nl
+bl (      ) s (ity[1]\)) s nl
+bl (21    ) s (                val prayToGod = strategyOfPrayToGod\(probability[2]\)) s nl
+bl (22    ) s nl
+bl (23    ) s (                agentName to bruteforce + stalker + prayToGod) s nl
+bl (24    ) s (            }) s nl
+bl (25    ) s (            .toMap\(\)) s nl
+bl (26    ) s nl
+bl (27    ) s (    // ) s (<!$N<j$rNs5s) ks (\(B\)) s nl
+bl (28    ) s (    val agentsActionB = listOf\("B_1", "B_2"\)) s nl
+bl (29    ) s (            .map{ agentName ->) s nl
+bl (30    ) s (                val randBrute = random.nextInt\(probability.sum\(\)\)) s nl
+bl (31    ) s (                val randStalker = random.nextInt\(probability.sum\(\) - randBrute\)) s nl
+bl (32    ) s (                val randGod = probability.sum\(\) - randBrute - randStalker) s nl
+bl (33    ) s nl
+bl (34    ) s (                val bruteforce = strategyOfBruteForce\(megurimasu, agentName, ra) s nl
+bl (      ) s (ndBrute\)) s nl
+bl (35    ) s (                val stalker = strategyOfStalker\(megurimasu, agentName, randStal) s nl
+bl (      ) s (ker\)) s nl
+bl (36    ) s (                val prayToGod = strategyOfPrayToGod\(randGod\)) s nl
+bl (37    ) s nl
+bl (38    ) s (                agentName to bruteforce + stalker + prayToGod) s nl
+bl (39    ) s (            }) s nl
+bl (40    ) s (            .toMap\(\)) s nl
+bl (41    ) s nl
+bl (42    ) s (    // ) s ($=$l$>$l$N%\(!<%8%'%s%H$,A*Br$7$?<j$r9g$o$;$F<!$NHWLL$r7h$a$k) ks nl
+bl (43    ) s (    val agentsAction = agentsActionA + agentsActionB) s nl
+bl (44    ) s (    val nextBehaviors = arrayListOf<Map<String, Int>>\(\)) s nl
+bl (45    ) s (    val total = probability.sum\(\)) s nl
+bl (46    ) s (    for\(i: Int in 0 until total * total\){) s nl
+bl (47    ) s (        nextBehaviors.add\(mapOf\() s nl
+bl (48    ) s (                "A_1" to agentsAction["A_1"]!![i / total],) s nl
+bl (49    ) s (                "A_2" to agentsAction["A_2"]!![i % total],) s nl
+bl (50    ) s (                "B_1" to agentsAction["B_1"]!![i / total],) s nl
+bl (51    ) s (                "B_2" to agentsAction["B_2"]!![i % total]) s nl
+bl (52    ) s (        \)\)) s nl
+bl (53    ) s (    }) s nl
+bl (54    ) s nl
+bl (55    ) s (    // ) s (%j!<%I$,0lHVBg$-$/$J$k$h$&$J<j$r8+$D$1$k) ks nl
+bl (56    ) s (    val nowBoard = megurimasu.conversion\(\)) s nl
+bl (57    ) s (    var maxScore = -99) s nl
+bl (58    ) s (    val bestBehavior = nextBehaviors) s nl
+bl (59    ) s (            .asSequence\(\)) s nl
+bl (60    ) s (            .maxBy { it ->) s nl
+bl (61    ) s (                megurimasu.action\(it\)) s nl
+
+endpage
+cleanup
+%%Page: 2 11
+/sheet 2 def
+(ReadAheadSolver.kt) setlabel
+2 startpage
+bl (62    ) s (                val \(score, _\) = searchBestBehavior\(megurimasu, depth - 1, prob) s nl
+bl (      ) s (ability\)) s nl
+bl (63    ) s (                megurimasu.deconversion\(nowBoard\)) s nl
+bl (64    ) s nl
+bl (65    ) s (                maxScore = max\(score, maxScore\)) s nl
+bl (66    ) s (                score) s nl
+bl (67    ) s (            }!!) s nl
+bl (68    ) s nl
+bl (69    ) s (    return Pair\(maxScore, mapOf\("A_1" to bestBehavior["A_1"]!!, "A_2" to bestBe) s nl
+bl (      ) s (havior["A_2"]!!\)\)) s nl
+bl (70    ) s (}) s nl
+bl (71    ) s nl
+bl (72    ) s (fun strategyOfBruteForce\(megurimasu: MegurimasuSimulator, agentName: String, nu) s nl
+bl (      ) s (m: Int\): List<Int>{) s nl
+bl (73    ) s (    val actionedScoreList = arrayListOf<Array<Int>>\(\)) s nl
+bl (74    ) s (    for\(i in 0..7\){) s nl
+bl (75    ) s (        var _i = i) s nl
+bl (76    ) s (        val movableList = listOf\(0, 1, 2, 3, 4, 5, 6, 7\).filter { it -> it != \() s nl
+bl (      ) s (i+4\)%8 }) s nl
+bl (77    ) s nl
+bl (78    ) s (        // ) s kanji_init (8=:_$NHWLL$+$i) ks (1) s ($D<j$rA*Br$7$?;~!$$=$l$KBP$7$F?7$?$K<j$rA*Br$7$?9g7W) ks (2) s () ks nl
+bl (      ) s (<j$N%9%3%"$r7W;;$7$F=87W$9$k) ks nl
+bl (79    ) s (        // ) s (I,MW$J$N$O) ks (1) s (<j8e$N>pJs$@$1$J$N$G!$) ks (2) s (<j8e$NA*Br$K$D$$$F$OFC$KA*Br$7$?<j) ks nl
+bl (      ) s ($NJ];}$J$I$r$7$J$$) ks nl
+bl (80    ) s (        val maxValue = arrayOf\(-99, 0\)) s nl
+bl (81    ) s (        movableList.forEach{ type ->) s nl
+bl (82    ) s (            // ) s (I,MW$J:BI8$r<hF@) ks nl
+bl (83    ) s (            val agentX = megurimasu.agents[agentName]!!.x) s nl
+bl (84    ) s (            val agentY = megurimasu.agents[agentName]!!.y) s nl
+bl (85    ) s (            val \(actionX, actionY\) = getActionPos\(agentX, agentY, i\)) s nl
+bl (86    ) s (            val \(actionXTwo, actionYTwo\) = getActionPos\(actionX, actionY, type\)) s nl
+bl (87    ) s nl
+bl (88    ) s (            // ) s (HO0O30) ks nl
+bl (89    ) s (            try { megurimasu.encampmentData[actionY][actionX]; megurimasu.encam) s nl
+bl (      ) s (pmentData[actionYTwo][actionXTwo]}) s nl
+bl (90    ) s (            catch \(e: ArrayIndexOutOfBoundsException\){ return@forEach }) s nl
+bl (91    ) s nl
+bl (92    ) s (            // ) s (4{$K<+J,$N?XCO$G$"$k$+E\($N?XCO$@$C$?>l9g$OIi$NI>2A$rM?$\($?$N$A$K) ks nl
+bl (      ) s (=87W$9$k) ks nl
+bl (93    ) s (            var score = megurimasu.scoreData[actionY][actionX] + megurimasu.sco) s nl
+bl (      ) s (reData[actionYTwo][actionXTwo]) s nl
+bl (94    ) s (            when\(megurimasu.encampmentData[actionY][actionX]\){) s nl
+bl (95    ) s (                0 -> { }) s nl
+bl (96    ) s (                getTeamID\(agentName\) -> score = 0) s nl
+bl (97    ) s (                else -> {score -= 3; _i += 10}) s nl
+bl (98    ) s (            }) s nl
+bl (99    ) s nl
+bl (100   ) s (            // ) s (:GBgCM99?7) ks nl
+bl (101   ) s (            if\(maxValue[0] < score\){) s nl
+bl (102   ) s (                maxValue[0] = score) s nl
+bl (103   ) s (                maxValue[1] = _i) s nl
+bl (104   ) s (            }) s nl
+bl (105   ) s nl
+bl (106   ) s (            if\(_i > 10\){ _i %= 10 }) s nl
+bl (107   ) s (        }) s nl
+bl (108   ) s nl
+bl (109   ) s (        actionedScoreList.add\(maxValue\)) s nl
+bl (110   ) s (    }) s nl
+bl (111   ) s nl
+bl (112   ) s (    // ) s (%9%3%"$r9_=g$K%=!<%H$7$F;XDj?t$@$1A*Br$7$F$=$N) ks (idx) s ($rJV$9) ks nl
+bl (113   ) s (    return actionedScoreList) s nl
+bl (114   ) s (            .asSequence\(\)) s nl
+bl (115   ) s (            .sortedByDescending { \( score, _\) -> score }) s nl
+bl (116   ) s (            .take\(num\)) s nl
+bl (117   ) s (            .map { it[1] }) s nl
+bl (118   ) s (            .toList\(\)) s nl
+
+endpage
+cleanup
+%%Page: 3 12
+/sheet 3 def
+(ReadAheadSolver.kt) setlabel
+3 startpage
+bl (119   ) s (}) s nl
+bl (120   ) s nl
+bl (121   ) s (fun strategyOfStalker\(megurimasu: MegurimasuSimulator, agentName: String, num: ) s nl
+bl (      ) s (Int\): List<Int>{) s nl
+bl (122   ) s (    // ) s kanji_init (B8:_$7$J$$%\(!<%8%'%s%H$NL>A0$,0z?t$GM?$\($i$l$?$H$-;~$OA4$F$,) ks (8) s ($N) ks (List) s ($rJV) ks nl
+bl (      ) s ($9) ks nl
+bl (123   ) s (    if\(agentName !in megurimasu.agents.keys\){) s nl
+bl (124   ) s (        return Array\(num\){ _ -> 8}.toList\(\)) s nl
+bl (125   ) s (    }) s nl
+bl (126   ) s nl
+bl (127   ) s (    // ) s (0lHV6a$$E\(%\(!<%8%'%s%H$rC5$9) ks nl
+bl (128   ) s (    val enemyTeam = if\("A" in agentName\) "B" else "A") s nl
+bl (129   ) s (    val agent = megurimasu.agents[agentName]!!) s nl
+bl (130   ) s (    val enemyAgents = arrayOf\(megurimasu.agents["${enemyTeam}_1"]!!, megurimasu) s nl
+bl (      ) s (.agents["${enemyTeam}_2"]!!\)) s nl
+bl (131   ) s (    val minDistAgent = enemyAgents) s nl
+bl (132   ) s (            .minBy { calDist\(agent.x, agent.y, it.x, it.y\) }!!) s nl
+bl (133   ) s nl
+bl (134   ) s (    // ) s (0lHV6a$$%\(!<%8%'%s%H$K6a$E$/$?$a$N9TF0%?%$%W$rC5$9) ks nl
+bl (135   ) s (    val meAgentDegree = calDegree2Points\(agent.x, agent.y, minDistAgent.x, minD) s nl
+bl (      ) s (istAgent.y\).toInt\(\)) s nl
+bl (136   ) s (    val optimalActionType = \(meAgentDegree % 360 / 45 + 2\) % 8) s nl
+bl (137   ) s nl
+bl (138   ) s (    // ) s (I>2A$N9b$$$b$N$+$i=g$K) ks (List) s ($KJ|$j9~$`) ks nl
+bl (139   ) s (    val retList = mutableListOf\(optimalActionType\)) s nl
+bl (140   ) s (    for\(i: Int in 1..4\){) s nl
+bl (141   ) s (        retList.add\(\(optimalActionType + i + 8\) % 8\)) s nl
+bl (142   ) s (        retList.add\(\(optimalActionType + \(i * -1\) + 8\) % 8\)) s nl
+bl (143   ) s (    }) s nl
+bl (144   ) s nl
+bl (145   ) s (    // ) s (E\(?XCO$@$C$?>l9g$O%Q%M%k=|5n$r9T$&$h$&$K) ks nl
+bl (146   ) s (    retList.forEachIndexed { idx, elem  ->) s nl
+bl (147   ) s (        val agentX = megurimasu.agents[agentName]!!.x) s nl
+bl (148   ) s (        val agentY = megurimasu.agents[agentName]!!.y) s nl
+bl (149   ) s (        val \(actionX, actionY\) = getActionPos\(agentX, agentY, elem\)) s nl
+bl (150   ) s nl
+bl (151   ) s (        // ) s (HO0O30) ks nl
+bl (152   ) s (        try { megurimasu.encampmentData[actionY][actionX]}) s nl
+bl (153   ) s (        catch \(e: IndexOutOfBoundsException\){ return@forEachIndexed }) s nl
+bl (154   ) s nl
+bl (155   ) s (        if\(!listOf\(0, getTeamID\(agentName\)\).contains\(megurimasu.encampmentData[) s nl
+bl (      ) s (actionY][actionX]\)\){) s nl
+bl (156   ) s (            retList[idx] += 10) s nl
+bl (157   ) s (        }) s nl
+bl (158   ) s (    }) s nl
+bl (159   ) s nl
+bl (160   ) s (    return retList.take\(num\)) s nl
+bl (161   ) s (}) s nl
+bl (162   ) s nl
+bl (163   ) s (fun strategyOfPrayToGod\(num: Int\): List<Int>{) s nl
+bl (164   ) s (    // ) s (%i%s%@%`$KCM$rA*Br$7$F) ks (List) s ($K5M$a$FJV$9) ks nl
+bl (165   ) s (    val retList = mutableListOf<Int>\(\)) s nl
+bl (166   ) s (    for\(i in 0 until num\){) s nl
+bl (167   ) s (        var randValue = 0) s nl
+bl (168   ) s (        do{) s nl
+bl (169   ) s (            randValue = random.nextInt\(8\) + random.nextInt\(2\) * 10) s nl
+bl (170   ) s (        }while\(retList.contains\(randValue\)\)) s nl
+bl (171   ) s nl
+bl (172   ) s (        retList.add\(randValue\)) s nl
+bl (173   ) s (    }) s nl
+bl (174   ) s nl
+bl (175   ) s (    return retList) s nl
+bl (176   ) s (}) s nl
+
+endpage
+cleanup
+%%Page: 1 13
+/sheet 1 def
+(TCPConnectionManager.kt) setlabel
+1 startpage
+bl (1     ) s (import com.sun.jdi.connect.spi.ClosedConnectionException) s nl
+bl (2     ) s (import java.io.BufferedReader) s nl
+bl (3     ) s (import java.io.InputStreamReader) s nl
+bl (4     ) s (import java.lang.Exception) s nl
+bl (5     ) s (import java.net.Socket) s nl
+bl (6     ) s (import kotlin.concurrent.thread) s nl
+bl (7     ) s nl
+bl (8     ) s (class TCPConnectionManager\(private val hostAddress: String, private val hostPor) s nl
+bl (      ) s (t: Int, private val receiver: \(String\) -> Unit\){) s nl
+bl (9     ) s nl
+bl (10    ) s (    var socket: Socket? = null) s nl
+bl (11    ) s (    init { initSocket\(\) }) s nl
+bl (12    ) s nl
+bl (13    ) s (    private fun initSocket\(\){) s nl
+bl (14    ) s (        try {) s nl
+bl (15    ) s (            socket = Socket\(hostAddress, hostPort\)) s nl
+bl (16    ) s (            println\("Socket Open"\)) s nl
+bl (17    ) s (        }) s nl
+bl (18    ) s (        catch \(e: Exception\) {) s nl
+bl (19    ) s (            e.printStackTrace\(\)) s nl
+bl (20    ) s (        }) s nl
+bl (21    ) s (    }) s nl
+bl (22    ) s nl
+bl (23    ) s (    // ) s kanji_init (%G!<%?<u?.3+;O) ks nl
+bl (24    ) s (    fun receiveStart\(\){) s nl
+bl (25    ) s (        thread { receiveData\(\) }) s nl
+bl (26    ) s (    }) s nl
+bl (27    ) s nl
+bl (28    ) s (    private fun closeSocket\(\){) s nl
+bl (29    ) s (        if\(socket == null\){ return }) s nl
+bl (30    ) s nl
+bl (31    ) s (        socket!!.close\(\)) s nl
+bl (32    ) s (        println\("Socket Closed"\)) s nl
+bl (33    ) s (        receiver\("close"\)) s nl
+bl (34    ) s (    }) s nl
+bl (35    ) s nl
+bl (36    ) s (    private fun receiveData\(\){) s nl
+bl (37    ) s (        if\(socket == null\){ return }) s nl
+bl (38    ) s nl
+bl (39    ) s (        // ) s (%G!<%?<u?.=hM}) ks nl
+bl (40    ) s (        //  - ) s (<u?.$7$?%G!<%?$O%l%7!<%P4X?t$X) ks nl
+bl (41    ) s (        //  - ) s (@ZCG;~$K$O) ks (CloseConnectionException) s ($rEj$2$k) ks nl
+bl (42    ) s (        try {) s nl
+bl (43    ) s (             val reader = BufferedReader\(InputStreamReader\(socket!!.getInputStr) s nl
+bl (      ) s (eam\(\)\)\)) s nl
+bl (44    ) s (             while \(true\) {) s nl
+bl (45    ) s (                 val text = reader.readLine\(\) ?: throw ClosedConnectionExceptio) s nl
+bl (      ) s (n\(\)) s nl
+bl (46    ) s (                 receiver\(text\)) s nl
+bl (47    ) s (             }) s nl
+bl (48    ) s (         } catch \(e: ClosedConnectionException\){) s nl
+bl (49    ) s (             closeSocket\(\)) s nl
+bl (50    ) s (         } catch \(e: Exception\) {) s nl
+bl (51    ) s (             e.printStackTrace\(\)) s nl
+bl (52    ) s (             closeSocket\(\)) s nl
+bl (53    ) s (         }) s nl
+bl (54    ) s (    }) s nl
+bl (55    ) s (}) s
+endpage
+cleanup
+%%Page: 1 14
+/sheet 1 def
+(Util.kt) setlabel
+1 startpage
+bl (1     ) s (import kotlin.math.PI) s nl
+bl (2     ) s (import kotlin.math.sqrt) s nl
+bl (3     ) s (import kotlin.math.atan2) s nl
+bl (4     ) s nl
+bl (5     ) s (fun getActionPos\(x: Int, y: Int, type: Int\): Pair<Int, Int>{) s nl
+bl (6     ) s (    if\(type%10 !in 0..8 && type%10 !in 10..18\){ return Pair\(0, 0\) }) s nl
+bl (7     ) s nl
+bl (8     ) s (    return Pair\() s nl
+bl (9     ) s (            x + movementValues[type]!!["x"]!!,) s nl
+bl (10    ) s (            y + movementValues[type]!!["y"]!!) s nl
+bl (11    ) s (    \)) s nl
+bl (12    ) s (}) s nl
+bl (13    ) s nl
+bl (14    ) s (fun getTeamID\(agentName: String\): Int{) s nl
+bl (15    ) s (    return when\(agentName\){) s nl
+bl (16    ) s (        "A_1", "A_2", "A" -> 1) s nl
+bl (17    ) s (        "B_1", "B_2", "B" -> 2) s nl
+bl (18    ) s (        else -> 0) s nl
+bl (19    ) s (    }) s nl
+bl (20    ) s (}) s nl
+bl (21    ) s nl
+bl (22    ) s (fun calDist\(x: Int, y: Int, x_1: Int, y_1:Int\): Double{) s nl
+bl (23    ) s (    return sqrt\( \(\(x-x_1\) * \(x-x_1\) + \(y-y_1\) * \(y-y_1\)\).toDouble\(\) \)) s nl
+bl (24    ) s (}) s nl
+bl (25    ) s nl
+bl (26    ) s (fun calDegree2Points\(x: Double, y: Double, x_2: Double, y_2: Double\): Double{) s nl
+bl (27    ) s (    var degree = atan2\(y_2-y, x_2-x\) * 180 / PI) s nl
+bl (28    ) s (    if\(degree < 0\){) s nl
+bl (29    ) s (        degree += 360) s nl
+bl (30    ) s (    }) s nl
+bl (31    ) s nl
+bl (32    ) s (    return degree) s nl
+bl (33    ) s (}) s nl
+bl (34    ) s nl
+bl (35    ) s (fun calDegree2Points\(x: Int, y: Int, x_2: Int, y_2: Int\): Double{) s nl
+bl (36    ) s (    return calDegree2Points\(x.toDouble\(\), y.toDouble\(\), x_2.toDouble\(\), y_2.toD) s nl
+bl (      ) s (ouble\(\)\)) s nl
+bl (37    ) s (}) s nl
+bl (38    ) s nl
+bl (39    ) s (val movementValues = mapOf\() s nl
+bl (40    ) s (        8 to mapOf\("x" to 0,  "y" to 0\),) s nl
+bl (41    ) s (        0 to mapOf\("x" to 0,  "y" to -1\),) s nl
+bl (42    ) s (        1 to mapOf\("x" to 1,  "y" to -1\),) s nl
+bl (43    ) s (        2 to mapOf\("x" to 1,  "y" to 0\),) s nl
+bl (44    ) s (        3 to mapOf\("x" to 1,  "y" to 1\),) s nl
+bl (45    ) s (        4 to mapOf\("x" to 0,  "y" to 1\),) s nl
+bl (46    ) s (        5 to mapOf\("x" to -1, "y" to 1\),) s nl
+bl (47    ) s (        6 to mapOf\("x" to -1, "y" to 0\),) s nl
+bl (48    ) s (        7 to mapOf\("x" to -1, "y" to -1\)) s nl
+bl (49    ) s (\)) s
+endpage
+
+cleanup
+%%Trailer
+docsave restore end
