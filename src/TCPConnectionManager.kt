@@ -16,6 +16,7 @@ class TCPConnectionManager(private val hostAddress: String, private val hostPort
         return try {
             socket = Socket(hostAddress, hostPort)
             receiver("open")
+            connecting = true
             true
         }
         catch (e: Exception) { false }
