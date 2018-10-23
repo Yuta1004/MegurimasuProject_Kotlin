@@ -3,34 +3,49 @@ import java.io.BufferedReader
 import java.io.InputStreamReader
 import java.lang.Exception
 import java.net.Socket
+import java.util.logging.Handler
 import kotlin.concurrent.thread
 
 class TCPConnectionManager(private val hostAddress: String, private val hostPort: Int, private val receiver: (String) -> Unit){
 
     var socket: Socket? = null
+    var connecting = false
     init { initSocket() }
 
-    private fun initSocket(){
-        try {
+    private fun initSocket(): Boolean{
+        return try {
             socket = Socket(hostAddress, hostPort)
-            println("Socket Open")
+            receiver("open")
+            true
         }
-        catch (e: Exception) {
-            e.printStackTrace()
-        }
+        catch (e: Exception) { false }
     }
 
     // データ受信開始
     fun receiveStart(){
-        thread { receiveData() }
+        thread {
+            receiveData()
+            closeSocket()
+            connect()
+        }
+    }
+
+    private fun connect(){
+        while(!initSocket()){
+            Thread.sleep(3000)
+            receiver("reconnect")
+        }
+
+        connecting = true
+        receiveStart()
     }
 
     private fun closeSocket(){
         if(socket == null){ return }
 
         socket!!.close()
-        println("Socket Closed")
         receiver("close")
+        connecting = false
     }
 
     private fun receiveData(){
@@ -45,11 +60,8 @@ class TCPConnectionManager(private val hostAddress: String, private val hostPort
                  val text = reader.readLine() ?: throw ClosedConnectionException()
                  receiver(text)
              }
-         } catch (e: ClosedConnectionException){
-             closeSocket()
-         } catch (e: Exception) {
-             e.printStackTrace()
-             closeSocket()
+         } catch (e: Exception){
+            return
          }
     }
 }
