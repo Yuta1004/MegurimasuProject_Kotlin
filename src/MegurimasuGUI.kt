@@ -93,7 +93,7 @@ class MegurimasuGUI(var megurimasu: MegurimasuSimulator) : JFrame() {
         g.color = Color.BLACK
         g.stroke = BasicStroke(5f)
         g.drawRect(50 * x + 10, 50 * y + 30, 50, 50)
-        g.color = getColorFromID(megurimasu.encampmentData[y][x])
+        g.color = getEncampmentColor(x, y)
         g.fillRect(50 * x + 10, 50 * y + 30, 50, 50)
     }
 
@@ -115,8 +115,20 @@ class MegurimasuGUI(var megurimasu: MegurimasuSimulator) : JFrame() {
         return Pair(drawX, drawY)
     }
 
-    private fun getColorFromID(teamID: Int): Color{
-        return when(teamID){
+    private fun getEncampmentColor(x: Int, y: Int): Color{
+        val agentPos = megurimasu.agents.map { it.value.x * 100 + it.value.y }
+        val encampmentData = megurimasu.encampmentData[y][x]
+
+        // エージェントがいる座標だったら
+        if(agentPos.contains(x * 100 + y)){
+            return when(encampmentData){
+                1 -> Color(255, 100, 100)
+                2 -> Color(100, 100, 255)
+                else -> Color.WHITE
+            }
+        }
+
+        return when(encampmentData){
             1 -> Color(255, 200, 200)
             2 -> Color(200, 200, 255)
             else -> Color.WHITE
