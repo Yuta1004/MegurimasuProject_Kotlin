@@ -2,3 +2,5 @@
 /out
 /src/META-INF
 *.iml
+run.sh
+ver.txt
