@@ -132,8 +132,8 @@ fun strategyOfBruteForce(megurimasu: MegurimasuSimulator, agentName: String, num
             // 既に自分の陣地であるか敵の陣地だった場合は負の評価を与えたのちに集計する
             var score = megurimasu.scoreData[actionY][actionX] + megurimasu.scoreData[actionYTwo][actionXTwo]
             when(megurimasu.encampmentData[actionY][actionX]){
-                0 -> { score = (score * 1.3).toInt() }
-                getTeamID(agentName) -> score = 0
+                0 -> { score = (score * 1.5).toInt() }
+                getTeamID(agentName) -> -7
                 else -> { _i += 10 }
             }
 
