@@ -33,6 +33,17 @@ class TCPConnectionManager(private val hostAddress: String, private val hostPort
         }
     }
 
+    // データ送信
+    fun sendData(text: String){
+        try{
+            val writer = socket!!.getOutputStream()
+            writer.write(("$text\n").toByteArray())
+        }catch(e: Exception){
+            println("データ送信失敗")
+        }
+    }
+
+
     private fun connect(){
         while(!initSocket()){
             Thread.sleep(2000)

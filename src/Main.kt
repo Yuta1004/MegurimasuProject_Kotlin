@@ -19,7 +19,7 @@ fun main(args: Array<String>){
     println("スマートフォンに接続してください")
     while(!tcpConnectionManager.connecting){ Thread.sleep(50) }
     println("スマートフォンに接続されました")
-    
+
     // 何手先まで読むか尋ねる
     print("何手先まで読むかを入力してください(推奨: 2 or 3) > ")
     val inpValue = readLine()?: "3"
@@ -31,6 +31,9 @@ fun main(args: Array<String>){
         val inpStrategyUseValue = readLine()?: "2"
         strategyProbab[idx] = inpStrategyUseValue.toInt()
     }
+
+    // 設定内容をスマートフォンに送信
+    tcpConnectionManager.sendData("Setting@AI:$depth:${strategyProbab[0]}:${strategyProbab[1]}:${strategyProbab[2]}")
 
     // QRデータ待機
     println("QRコードをアプリで撮影してください")
@@ -120,6 +123,8 @@ fun tcpReceiver(text: String) {
             return
         }
         "open" -> {
+            // 設定内容をスマートフォンに送信
+            tcpConnectionManager.sendData("Setting@AI:$depth:${strategyProbab[0]}:${strategyProbab[1]}:${strategyProbab[2]}")
             writeLog("スマートフォンが接続されました")
             return
         }
