@@ -89,7 +89,7 @@ class MegurimasuSimulator(agentInitPos: Map<String, Array<Int>>, var scoreData: 
         // エージェントを行動させる(重複してないかつ条件を満たしたものだけ)
         duplicateDetection(takeActionPositions)
                 .forEach { agentName, isDuplicate ->
-                    if(isDuplicate || !agents.containsKey(agentName) || !behavior.containsKey(agentName)) {
+                    if((behavior[agentName]!! < 10 && isDuplicate) || !agents.containsKey(agentName) || !behavior.containsKey(agentName)) {
                         return@forEach
                     }
                     agents[agentName]!!.action(behavior[agentName]!!)
