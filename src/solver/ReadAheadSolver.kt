@@ -102,7 +102,7 @@ fun searchBestBehavior(megurimasu: MegurimasuSimulator, depth: Int, probability:
 
     // リードが一番大きくなるような手を見つける
     val nowBoard = megurimasu.conversion()
-    var maxScore = -99
+    var maxScore = -99999999
     val bestBehavior = nextBehaviors
             .asSequence()
             .maxBy { it ->
@@ -120,13 +120,14 @@ fun searchBestBehavior(megurimasu: MegurimasuSimulator, depth: Int, probability:
 fun strategyOfBruteForce(megurimasu: MegurimasuSimulator, agentName: String, num: Int): List<Int>{
     val actionedScoreList = arrayListOf<Array<Int>>()
     for(i in 0..7){
-        var _i = i
         val movableList = listOf(0, 1, 2, 3, 4, 5, 6, 7).filter { it -> it != (i+4)%8 }
 
         // 現在の盤面から1つ手を選択した時，それに対して新たに手を選択した合計2手のスコアを計算して集計する
         // 必要なのは1手後の情報だけなので，2手後の選択については特に選択した手の保持などをしない
         val maxValue = arrayOf(-99, 0)
         movableList.forEach{ type ->
+            var _i = i
+
             // 必要な座標を取得
             val agentX = megurimasu.agents[agentName]!!.x
             val agentY = megurimasu.agents[agentName]!!.y
@@ -137,16 +138,20 @@ fun strategyOfBruteForce(megurimasu: MegurimasuSimulator, agentName: String, num
             try { megurimasu.encampmentData[actionY][actionX]; megurimasu.encampmentData[actionYTwo][actionXTwo]}
             catch (e: ArrayIndexOutOfBoundsException){ return@forEach }
 
-            // 既に自分の陣地であるか敵の陣地だった場合は負の評価を与えたのちに集計する
+            // 評価値計算
             var score = megurimasu.scoreData[actionY][actionX] + megurimasu.scoreData[actionYTwo][actionXTwo]
             when(megurimasu.encampmentData[actionY][actionX]){
-                0 -> { score = (score * 1.5).toInt() }
-                getTeamID(agentName) -> -7
-                else -> { _i += 10 }
+                0 -> {
+                    score = (score * (max(random.nextFloat()-0.3, 0.4) + 1)).toInt()
+                }
+                getTeamID(agentName) -> {
+                    random.nextFloat() * -15
+                }
+                else -> {
+                    score = (score * (max(random.nextFloat()-0.6, 0.2) + 1)).toInt()
+                    _i += 10
+                }
             }
-
-            // _iが正しい値でなかった場合修正
-            while(_i > 17){ _i-- }
 
             // 最大値更新
             if(maxValue[0] < score){
