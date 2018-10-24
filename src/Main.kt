@@ -2,9 +2,9 @@ import manager.TCPConnectionManager
 import solver.searchBestBehavior
 import util.QRParser
 
-var qrData: String? = null
+var qrData = "Waiting"
 var manualActionData = "Waiting"
-var posData: String? = null
+var posData = "Waiting"
 var depth = 1
 var probability = arrayOf(5, 0, 0)
 var manualControl = false
@@ -36,12 +36,12 @@ fun main(args: Array<String>){
 
     // QRデータ待機
     println("QRコードをアプリで撮影してください")
-//    while(qrData == null){ Thread.sleep(5) }
+//    while(qrData == "Waiting"){ Thread.sleep(5) }
     qrData = "10 11:4 0 7 12 15 -11 15 12 7 0 4:13 11 13 3 7 12 7 3 13 11 13:0 5 6 13 5 6 5 13 6 5 0:8 10 -5 4 14 5 14 4 -5 10 8:14 15 10 5 -2 2 -2 5 10 15 14:14 15 10 5 -2 2 -2 5 10 15 14:8 10 -5 4 14 5 14 4 -5 10 8:0 5 6 13 5 6 5 13 6 5 0:13 11 13 3 7 12 7 3 13 11 13:4 0 7 12 15 -11 15 12 7 0 4:3 1:8 11:"
     println("QRデータを受信しました")
 
     // スコアデータとエージェント初期位置取得
-    val qrParser = QRParser(qrData!!)
+    val qrParser = QRParser(qrData)
     val scoreData = qrParser.getScoreData()
     val agentPos = qrParser.getAgentPos()
 
@@ -65,9 +65,8 @@ fun main(args: Array<String>){
         writeLog("相手エージェントの行動情報を受信しました")
 
         // 相手の行動を取得
-        val agentB1Action = posData!!.split(":")[0].toInt()
-        val agentB2Action = posData!!.split(":")[1].toInt()
-        posData = null
+        val agentB1Action = posData.split(":")[0].toInt()
+        val agentB2Action = posData.split(":")[1].toInt()
 
         // 場面更新
         val behavior = mapOf(
