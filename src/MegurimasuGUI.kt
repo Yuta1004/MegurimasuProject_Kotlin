@@ -22,7 +22,7 @@ class MegurimasuGUI(var megurimasu: MegurimasuSimulator) : JFrame() {
     // 盤面更新
     fun updateBoard(megurimasu: MegurimasuSimulator){
         this.megurimasu = megurimasu
-        bufImage = createImage(650, 650)
+        bufImage = createImage(650, 800)
         drawBoard()
         revalidate()
         repaint()
@@ -84,7 +84,7 @@ class MegurimasuGUI(var megurimasu: MegurimasuSimulator) : JFrame() {
         val score = megurimasu.calScore()
         val scoreStr = "自チーム ${String.format("%5d", score["A"])} vs ${String.format("%-5d", score["B"])} 相手チーム"
         graphics.font = Font("Selif", 10, 30)
-        val (drawX, drawY) = getDrawCenterPos(graphics, scoreStr, 300, 620)
+        val (drawX, drawY) = getDrawCenterPos(graphics, scoreStr, 300, 700)
         graphics.drawString(scoreStr, drawX, drawY)
     }
 
