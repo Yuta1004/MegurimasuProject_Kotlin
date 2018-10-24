@@ -6,7 +6,7 @@ var qrData = "Waiting"
 var manualActionData = "Waiting"
 var posData = "Waiting"
 var depth = 1
-var probability = arrayOf(5, 0, 0)
+var strategyProbab = arrayOf(5, 0, 0)
 var manualControl = false
 
 val tcpConnectionManager = TCPConnectionManager("localhost", 6666, ::tcpReceiver)
@@ -19,8 +19,7 @@ fun main(args: Array<String>){
     println("スマートフォンに接続してください")
     while(!tcpConnectionManager.connecting){ Thread.sleep(50) }
     println("スマートフォンに接続されました")
-
-    // TODO: ゲーム中でも変更できるようにする
+    
     // 何手先まで読むか尋ねる
     print("何手先まで読むかを入力してください(推奨: 2 or 3) > ")
     val inpValue = readLine()?: "3"
@@ -30,7 +29,7 @@ fun main(args: Array<String>){
     listOf("ゴリ押し", "ストーカー", "ランダム").forEachIndexed { idx, strategy ->
         print("[${strategy}作戦] をいくつ採用するか入力してください > ")
         val inpStrategyUseValue = readLine()?: "2"
-        probability[idx] = inpStrategyUseValue.toInt()
+        strategyProbab[idx] = inpStrategyUseValue.toInt()
     }
 
     // QRデータ待機
@@ -102,7 +101,7 @@ fun getNextBehavior(): Pair<Int, Map<String, Int>>{
 
     // 最善手探索
     writeLog("最善手を探索しています…")
-    return searchBestBehavior(megurimasu!!, depth, probability)
+    return searchBestBehavior(megurimasu!!, depth, strategyProbab)
 }
 
 fun writeLog(text: String){
@@ -143,6 +142,17 @@ fun tcpReceiver(text: String) {
         "SwitchControl" -> {
             if(data == "Manual"){ manualControl = true; writeLog("＊＊＊モードが「マニュアル」になりました＊＊＊") }
             else if(data == "AI"){ manualControl = false; writeLog("＊＊＊モードが「オート」になりました＊＊＊") }
+        }
+        "SetStrategy" -> {
+            val dividedData = data.split(":")
+            dividedData.forEachIndexed{ idx, probab ->
+                strategyProbab[idx] = probab.toInt()
+            }
+            writeLog("作戦選択の内訳が変更されました")
+        }
+        "SetDepth" -> {
+            depth = data.toInt()
+            writeLog("読みの深さが変更されました -> $depth")
         }
     }
 }
