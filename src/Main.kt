@@ -3,11 +3,14 @@ import solver.searchBestBehavior
 import util.QRParser
 
 var qrData: String? = null
+var manualActionData = "Waiting"
 var posData: String? = null
 var depth = 1
 var probability = arrayOf(5, 0, 0)
+var manualControl = false
 
 val tcpConnectionManager = TCPConnectionManager("localhost", 6666, ::tcpReceiver)
+var megurimasu: MegurimasuSimulator? = null
 var megurimasuGUI: MegurimasuGUI? = null
 
 fun main(args: Array<String>){
@@ -43,16 +46,15 @@ fun main(args: Array<String>){
     val agentPos = qrParser.getAgentPos()
 
     // MegurimasuSimulator初期化 & GUI初期化
-    val megurimasu = MegurimasuSimulator(agentPos, scoreData)
-    megurimasuGUI = MegurimasuGUI(megurimasu)
+    megurimasu = MegurimasuSimulator(agentPos, scoreData)
+    megurimasuGUI = MegurimasuGUI(megurimasu!!)
 
     // 思考ループ
     val doLoop = true
     while(doLoop){
-        // 最善手探索
-        writeLog("最善手を探しています…")
-        val (maxScore, bestBehavior) = searchBestBehavior(megurimasu, depth, probability)
-        writeLog("探索が終了しました")
+        // 次の手を探索
+        val (maxScore, bestBehavior) = getNextBehavior()
+        writeLog(if(manualControl) "探索が終了しました" else "入力を受け付けました")
         writeLog("盤面評価値：$maxScore")
         megurimasuGUI!!.viewBestBehavior(bestBehavior)
 
@@ -72,9 +74,32 @@ fun main(args: Array<String>){
                 "A_1" to bestBehavior["A_1"]!!, "A_2" to bestBehavior["A_2"]!!,
                 "B_1" to agentB1Action, "B_2" to agentB2Action
         )
-        megurimasu.action(behavior)
-        megurimasuGUI!!.updateBoard(megurimasu)
+        megurimasu!!.action(behavior)
+        megurimasuGUI!!.updateBoard(megurimasu!!)
     }
+}
+
+fun getNextBehavior(): Pair<Int, Map<String, Int>>{
+    // マニュアルモードなら
+    if(manualControl){
+        // 入力されるまで待機
+        writeLog("＊＊＊システムはマニュアルモードになっています＊＊＊")
+        writeLog("自チームの行動情報を入力してください")
+        manualActionData = "Waiting"
+        while(manualActionData == "Waiting"){ Thread.sleep(5) }
+
+        // 情報取り出す
+        val nextBehavior = mapOf(
+                "A_1" to manualActionData.split(":")[0].toInt(),
+                "A_2" to manualActionData.split(":")[1].toInt()
+        )
+
+        return Pair(0, nextBehavior)
+    }
+
+    // 最善手探索
+    writeLog("最善手を探索しています…")
+    return searchBestBehavior(megurimasu!!, depth, probability)
 }
 
 fun writeLog(text: String){
