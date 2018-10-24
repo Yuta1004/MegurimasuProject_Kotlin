@@ -80,8 +80,9 @@ class MegurimasuSimulator(agentInitPos: Map<String, Array<Int>>, var scoreData: 
     }
 
     fun action(behavior: Map<String, Int>){
-        // 行動後の座標を取得する
         val takeActionPositions = mutableMapOf<String, Int>()
+
+        // 行動後の座標を取得する
         actionSimulation(behavior).forEach { agentName, pos ->
             takeActionPositions[agentName] = pos["x"]!!*100 + pos["y"]!!
         }
@@ -89,11 +90,16 @@ class MegurimasuSimulator(agentInitPos: Map<String, Array<Int>>, var scoreData: 
         // エージェントを行動させる(重複してないかつ条件を満たしたものだけ)
         duplicateDetection(takeActionPositions)
                 .forEach { agentName, isDuplicate ->
-                    if((behavior[agentName]!! < 10 && isDuplicate) || !agents.containsKey(agentName) || !behavior.containsKey(agentName)) {
+                    if(isDuplicate || !agents.containsKey(agentName) || !behavior.containsKey(agentName)) {
                         return@forEach
                     }
                     agents[agentName]!!.action(behavior[agentName]!!)
                 }
+
+        // エージェント位置反映
+        agents.forEach { agentName, pos ->
+            encampmentData[pos.y][pos.x] = getTeamID(agentName)
+        }
     }
 
     private fun actionSimulation(behavior: Map<String, Int>): Map<String, Map<String, Int>>{
