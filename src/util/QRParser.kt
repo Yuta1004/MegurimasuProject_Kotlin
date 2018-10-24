@@ -1,3 +1,5 @@
+package util
+
 class QRParser(qrText: String){
     private val qrData = qrText.split(":")
     private val stageSizeInfo = qrData[0].split(" ")

@@ -1,3 +1,5 @@
+package fortest
+
 import java.net.ServerSocket
 
 fun main(args: Array<String>) {

@@ -1,3 +1,6 @@
+package fortest
+
+import MegurimasuSimulator
 import java.util.Random
 import kotlin.system.measureTimeMillis
 

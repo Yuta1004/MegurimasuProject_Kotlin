@@ -1,3 +1,6 @@
+import util.DataConversion
+import util.getActionPos
+import util.getTeamID
 import kotlin.math.abs
 
 class MegurimasuSimulator(agentInitPos: Map<String, Array<Int>>, var scoreData: Array<Array<Int>>){
@@ -31,7 +34,7 @@ class MegurimasuSimulator(agentInitPos: Map<String, Array<Int>>, var scoreData: 
         private fun canAction(type: Int): Boolean {
             if(type !in 0..8 && type !in 10..18) return false
 
-            val (xCopy, yCopy) = getActionPos(x, y, type%10)
+            val (xCopy, yCopy) = getActionPos(x, y, type % 10)
 
             if(!isWithInRange(xCopy, yCopy)){ return false }
             val encampment = encampmentData[yCopy][xCopy]
@@ -54,7 +57,7 @@ class MegurimasuSimulator(agentInitPos: Map<String, Array<Int>>, var scoreData: 
             if(type !in 0..8 && type !in 10..18){ return mapOf("x" to 0, "y" to 0) }
             if(!canAction(type)){ return mapOf("x" to x, "y" to y)}
 
-            val (retX, retY) = getActionPos(x, y, type%10)
+            val (retX, retY) = getActionPos(x, y, type % 10)
             return mapOf("x" to retX, "y" to retY)
         }
     }

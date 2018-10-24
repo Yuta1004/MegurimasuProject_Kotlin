@@ -1,5 +1,5 @@
 %!PS-Adobe-1.0
-%%Title: DataConversion.kt
+%%Title: util.DataConversion.kt
 %%Creator: Id: a2ps,v 1.45 2001/05/28 07:25:46 utashiro Exp 
 %%CreationDate: Tue Oct 16 21:35:22 2018
 %%Pages: (atend)
@@ -401,9 +401,9 @@ startdoc
 
 %%Page: 1 1
 /sheet 1 def
-(DataConversion.kt) setlabel
+(util.DataConversion.kt) setlabel
 1 startpage
-bl (1     ) s (class DataConversion {) s nl
+bl (1     ) s (class util.DataConversion {) s nl
 bl (2     ) s (    companion object {) s nl
 bl (3     ) s (        fun conversion\(scoreData: Array<Array<Int>>, encampmentData: Array<Arra) s nl
 bl (      ) s (y<Int>>, agents: Map<String, MegurimasuSimulator.Agent>\): String {) s nl
@@ -474,7 +474,7 @@ endpage
 cleanup
 %%Page: 2 2
 /sheet 2 def
-(DataConversion.kt) setlabel
+(util.DataConversion.kt) setlabel
 2 startpage
 bl (61    ) s (                    "encampmentData" to encampmentData,) s nl
 bl (62    ) s (                    "agentPos" to agentPos) s nl
@@ -497,8 +497,8 @@ bl (2     ) s (var posData: String? = null) s nl
 bl (3     ) s (var depth = 3) s nl
 bl (4     ) s (var probability = arrayOf\(4, 1, 0\)) s nl
 bl (5     ) s nl
-bl (6     ) s (fun main\(args: Array<String>\){) s nl
-bl (7     ) s (    TCPConnectionManager\("localhost", 6666, ::tcpReceiver\).receiveStart\(\)) s nl
+bl (6     ) s (fun solver.fortest.fortest.main\(args: Array<String>\){) s nl
+bl (7     ) s (    manager.TCPConnectionManager\("localhost", 6666, ::tcpReceiver\).receiveStart\(\)) s nl
 bl (8     ) s nl
 bl (9     ) s (    // QR) s kanji_init (%G!<%?BT5!) ks nl
 bl (10    ) s (    println\("Please Input QR Data"\)) s nl
@@ -506,7 +506,7 @@ bl (11    ) s (    while\(qrData == null\){ Thread.sleep\(5\) }) s nl
 bl (12    ) s (    println\("Received QR Data"\)) s nl
 bl (13    ) s nl
 bl (14    ) s (    // ) s (%9%3%"%G!<%?$H%\(!<%8%'%s%H=i4|0LCV<hF@) ks nl
-bl (15    ) s (    val qrParser = QRParser\(qrData!!\)) s nl
+bl (15    ) s (    val qrParser = util.QRParser\(qrData!!\)) s nl
 bl (16    ) s (    val scoreData = qrParser.getScoreData\(\)) s nl
 bl (17    ) s (    val agentPos = qrParser.getAgentPos\(\)) s nl
 bl (18    ) s nl
@@ -518,7 +518,7 @@ bl (23    ) s (    val doLoop = true) s nl
 bl (24    ) s (    while\(doLoop\){) s nl
 bl (25    ) s (        // ) s (:GA1<jC5:w) ks nl
 bl (26    ) s (        println\("Searching Best Behavior..."\)) s nl
-bl (27    ) s (        val \(maxScore, bestBehavior\) = searchBestBehavior\(megurimasu, depth, pr) s nl
+bl (27    ) s (        val \(maxScore, bestBehavior\) = solver.searchBestBehavior\(megurimasu, depth, pr) s nl
 bl (      ) s (obability\)) s nl
 bl (28    ) s (        printInfo\(maxScore, bestBehavior, megurimasu\)) s nl
 bl (29    ) s nl
@@ -610,7 +610,7 @@ bl (15    ) s (                in 0..7 ->{) s nl
 bl (16    ) s (                    val movedValues = takeActionPos\(type\)) s nl
 bl (17    ) s (                    x = movedValues["x"]!!) s nl
 bl (18    ) s (                    y = movedValues["y"]!!) s nl
-bl (19    ) s (                    encampmentData[y][x] = getTeamID\(agentName\)) s nl
+bl (19    ) s (                    encampmentData[y][x] = util.getTeamID\(agentName\)) s nl
 bl (20    ) s (                }) s nl
 bl (21    ) s (                // ) s (%Q%M%k=|5n) ks nl
 bl (22    ) s (                in 10..17 ->{) s nl
@@ -625,7 +625,7 @@ bl (30    ) s nl
 bl (31    ) s (        private fun canAction\(type: Int\): Boolean {) s nl
 bl (32    ) s (            if\(type !in 0..8 && type !in 10..18\) return false) s nl
 bl (33    ) s nl
-bl (34    ) s (            val \(xCopy, yCopy\) = getActionPos\(x, y, type%10\)) s nl
+bl (34    ) s (            val \(xCopy, yCopy\) = util.getActionPos\(x, y, type%10\)) s nl
 bl (35    ) s nl
 bl (36    ) s (            if\(!isWithInRange\(xCopy, yCopy\)\){ return false }) s nl
 bl (37    ) s (            val encampment = encampmentData[yCopy][xCopy]) s nl
@@ -634,7 +634,7 @@ bl (39    ) s (            when\(type\){) s nl
 bl (40    ) s (                // ) s (0\\F0$N>l9g) ks (: ) s (0\\F0@h$,E\($N?XCO$G$"$l$P) ks (\(=) s (<+J,$N?XCO$G$J$$$+$D6u) ks nl
 bl (      ) s (Gr$G$O$J$$) ks (\)) s (>l9g$O0\\F0IT5v2D) ks nl
 bl (41    ) s (                in 0..8 -> {) s nl
-bl (42    ) s (                    if\(encampment != getTeamID\(agentName\) && encampment != 0\){ ) s nl
+bl (42    ) s (                    if\(encampment != util.getTeamID\(agentName\) && encampment != 0\){ ) s nl
 bl (      ) s (return false }) s nl
 bl (43    ) s (                }) s nl
 bl (44    ) s nl
@@ -651,7 +651,7 @@ bl (54    ) s (            if\(type !in 0..8 && type !in 10..18\){ return mapOf\
 bl (      ) s ( 0\) }) s nl
 bl (55    ) s (            if\(!canAction\(type\)\){ return mapOf\("x" to x, "y" to y\)}) s nl
 bl (56    ) s nl
-bl (57    ) s (            val \(retX, retY\) = getActionPos\(x, y, type%10\)) s nl
+bl (57    ) s (            val \(retX, retY\) = util.getActionPos\(x, y, type%10\)) s nl
 bl (58    ) s (            return mapOf\("x" to retX, "y" to retY\)) s nl
 bl (59    ) s (        }) s nl
 bl (60    ) s (    }) s nl
@@ -668,7 +668,7 @@ bl (63    ) s (        // ) s kanji_init (HWLL=i4|2=) ks nl
 bl (64    ) s (        encampmentData = Array\(scoreData.size\) { _ -> Array\(scoreData[0].size\) ) s nl
 bl (      ) s ({0}}) s nl
 bl (65    ) s (        agents.forEach { key, pos ->) s nl
-bl (66    ) s (            encampmentData[pos.y][pos.x] = getTeamID\(key\)) s nl
+bl (66    ) s (            encampmentData[pos.y][pos.x] = util.getTeamID\(key\)) s nl
 bl (67    ) s (        }) s nl
 bl (68    ) s (    }) s nl
 bl (69    ) s nl
@@ -737,7 +737,7 @@ cleanup
 /sheet 3 def
 (MegurimasuSimulator.kt) setlabel
 3 startpage
-bl (122   ) s (            val teamID = getTeamID\(key\)) s nl
+bl (122   ) s (            val teamID = util.getTeamID\(key\)) s nl
 bl (123   ) s (            score[key] = flatScoreDara) s nl
 bl (124   ) s (                    .filterIndexed { idx, _ -> encampmentData[idx/width][idx%wi) s nl
 bl (      ) s (dth] == teamID; }) s nl
@@ -749,7 +749,7 @@ bl (129   ) s (        flatScoreDara = flatScoreDara.map { abs\(it\) }.toIntArra
 bl (130   ) s (        arrayOf\("A", "B"\).forEach { teamIDStr ->) s nl
 bl (131   ) s (            var fillEncampment: Array<Array<Int>>? = Array\(height\) { _ -> Array) s nl
 bl (      ) s (\(width\){0} }) s nl
-bl (132   ) s (            val teamID = getTeamID\(teamIDStr\)) s nl
+bl (132   ) s (            val teamID = util.getTeamID\(teamIDStr\)) s nl
 bl (133   ) s nl
 bl (134   ) s (            // ) s (30<~$r=|$$$?A4$F$N:BI8$r5/E@$H$7$F?XCOC5:w$r$9$k) ks (\() s (:F5") ks (\)) s nl
 bl (135   ) s (            for\(y in 1 until height-1\){) s nl
@@ -820,12 +820,12 @@ bl (183   ) s (        return \(x in 0..\(width - 1\)\) && \(y in 0..\(height-1\
 bl (184   ) s (    }) s nl
 bl (185   ) s nl
 bl (186   ) s (    fun conversion\(\): String{) s nl
-bl (187   ) s (        return DataConversion.conversion\(scoreData, encampmentData, agents\)) s nl
+bl (187   ) s (        return util.DataConversion.conversion\(scoreData, encampmentData, agents\)) s nl
 bl (188   ) s (    }) s nl
 bl (189   ) s nl
 bl (190   ) s (    @Suppress\("UNCHECKED_CAST"\)) s nl
 bl (191   ) s (    fun deconversion\(target: String\){) s nl
-bl (192   ) s (        val stageData = DataConversion.deconversion\(target\)) s nl
+bl (192   ) s (        val stageData = util.DataConversion.deconversion\(target\)) s nl
 bl (193   ) s nl
 bl (194   ) s (        width = stageData["width"] as Int) s nl
 bl (195   ) s (        height = stageData["height"] as Int) s nl
@@ -837,9 +837,9 @@ endpage
 cleanup
 %%Page: 1 9
 /sheet 1 def
-(QRParser.kt) setlabel
+(util.QRParser.kt) setlabel
 1 startpage
-bl (1     ) s (class QRParser\(qrText: String\){) s nl
+bl (1     ) s (class util.QRParser\(qrText: String\){) s nl
 bl (2     ) s (    private val qrData = qrText.split\(":"\)) s nl
 bl (3     ) s (    private val stageSizeInfo = qrData[0].split\(" "\)) s nl
 bl (4     ) s (    private val height = stageSizeInfo[0].toInt\(\)) s nl
@@ -890,10 +890,10 @@ bl (2     ) s (import java.util.Random;) s nl
 bl (3     ) s (import kotlin.math.max) s nl
 bl (4     ) s (import kotlin.system.measureTimeMillis) s nl
 bl (5     ) s nl
-bl (6     ) s (val random = Random\(\)) s nl
+bl (6     ) s (val solver.getRandom = Random\(\)) s nl
 bl (7     ) s nl
 bl (8     ) s (// ) s kanji_init (:F5"$G$h$jNI$$<j$rC5$9) ks nl
-bl (9     ) s (fun searchBestBehavior\(megurimasu: MegurimasuSimulator, depth: Int, probability) s nl
+bl (9     ) s (fun solver.searchBestBehavior\(megurimasu: MegurimasuSimulator, depth: Int, probability) s nl
 bl (      ) s (: Array<Int>\): Pair<Int, Map<String, Int>>{) s nl
 bl (10    ) s (    // ) s (MU$J$i%9%3%"$r7W;;$7$FJV$9) ks nl
 bl (11    ) s (    if\(depth == 0\){) s nl
@@ -904,11 +904,11 @@ bl (15    ) s nl
 bl (16    ) s (    // ) s (<!$N<j$rNs5s) ks (\(A\)) s nl
 bl (17    ) s (    val agentsActionA = listOf\("A_1", "A_2"\)) s nl
 bl (18    ) s (            .map{ agentName ->) s nl
-bl (19    ) s (                val bruteforce = strategyOfBruteForce\(megurimasu, agentName, pr) s nl
+bl (19    ) s (                val bruteforce = solver.strategyOfBruteForce\(megurimasu, agentName, pr) s nl
 bl (      ) s (obability[0]\)) s nl
-bl (20    ) s (                val stalker = strategyOfStalker\(megurimasu, agentName, probabil) s nl
+bl (20    ) s (                val stalker = solver.strategyOfStalker\(megurimasu, agentName, probabil) s nl
 bl (      ) s (ity[1]\)) s nl
-bl (21    ) s (                val prayToGod = strategyOfPrayToGod\(probability[2]\)) s nl
+bl (21    ) s (                val prayToGod = solver.strategyOfPrayToGod\(probability[2]\)) s nl
 bl (22    ) s nl
 bl (23    ) s (                agentName to bruteforce + stalker + prayToGod) s nl
 bl (24    ) s (            }) s nl
@@ -917,15 +917,15 @@ bl (26    ) s nl
 bl (27    ) s (    // ) s (<!$N<j$rNs5s) ks (\(B\)) s nl
 bl (28    ) s (    val agentsActionB = listOf\("B_1", "B_2"\)) s nl
 bl (29    ) s (            .map{ agentName ->) s nl
-bl (30    ) s (                val randBrute = random.nextInt\(probability.sum\(\)\)) s nl
-bl (31    ) s (                val randStalker = random.nextInt\(probability.sum\(\) - randBrute\)) s nl
+bl (30    ) s (                val randBrute = solver.getRandom.nextInt\(probability.sum\(\)\)) s nl
+bl (31    ) s (                val randStalker = solver.getRandom.nextInt\(probability.sum\(\) - randBrute\)) s nl
 bl (32    ) s (                val randGod = probability.sum\(\) - randBrute - randStalker) s nl
 bl (33    ) s nl
-bl (34    ) s (                val bruteforce = strategyOfBruteForce\(megurimasu, agentName, ra) s nl
+bl (34    ) s (                val bruteforce = solver.strategyOfBruteForce\(megurimasu, agentName, ra) s nl
 bl (      ) s (ndBrute\)) s nl
-bl (35    ) s (                val stalker = strategyOfStalker\(megurimasu, agentName, randStal) s nl
+bl (35    ) s (                val stalker = solver.strategyOfStalker\(megurimasu, agentName, randStal) s nl
 bl (      ) s (ker\)) s nl
-bl (36    ) s (                val prayToGod = strategyOfPrayToGod\(randGod\)) s nl
+bl (36    ) s (                val prayToGod = solver.strategyOfPrayToGod\(randGod\)) s nl
 bl (37    ) s nl
 bl (38    ) s (                agentName to bruteforce + stalker + prayToGod) s nl
 bl (39    ) s (            }) s nl
@@ -958,7 +958,7 @@ cleanup
 /sheet 2 def
 (ReadAheadSolver.kt) setlabel
 2 startpage
-bl (62    ) s (                val \(score, _\) = searchBestBehavior\(megurimasu, depth - 1, prob) s nl
+bl (62    ) s (                val \(score, _\) = solver.searchBestBehavior\(megurimasu, depth - 1, prob) s nl
 bl (      ) s (ability\)) s nl
 bl (63    ) s (                megurimasu.deconversion\(nowBoard\)) s nl
 bl (64    ) s nl
@@ -970,7 +970,7 @@ bl (69    ) s (    return Pair\(maxScore, mapOf\("A_1" to bestBehavior["A_1"]!!,
 bl (      ) s (havior["A_2"]!!\)\)) s nl
 bl (70    ) s (}) s nl
 bl (71    ) s nl
-bl (72    ) s (fun strategyOfBruteForce\(megurimasu: MegurimasuSimulator, agentName: String, nu) s nl
+bl (72    ) s (fun solver.strategyOfBruteForce\(megurimasu: MegurimasuSimulator, agentName: String, nu) s nl
 bl (      ) s (m: Int\): List<Int>{) s nl
 bl (73    ) s (    val actionedScoreList = arrayListOf<Array<Int>>\(\)) s nl
 bl (74    ) s (    for\(i in 0..7\){) s nl
@@ -987,8 +987,8 @@ bl (81    ) s (        movableList.forEach{ type ->) s nl
 bl (82    ) s (            // ) s (I,MW$J:BI8$r<hF@) ks nl
 bl (83    ) s (            val agentX = megurimasu.agents[agentName]!!.x) s nl
 bl (84    ) s (            val agentY = megurimasu.agents[agentName]!!.y) s nl
-bl (85    ) s (            val \(actionX, actionY\) = getActionPos\(agentX, agentY, i\)) s nl
-bl (86    ) s (            val \(actionXTwo, actionYTwo\) = getActionPos\(actionX, actionY, type\)) s nl
+bl (85    ) s (            val \(actionX, actionY\) = util.getActionPos\(agentX, agentY, i\)) s nl
+bl (86    ) s (            val \(actionXTwo, actionYTwo\) = util.getActionPos\(actionX, actionY, type\)) s nl
 bl (87    ) s nl
 bl (88    ) s (            // ) s (HO0O30) ks nl
 bl (89    ) s (            try { megurimasu.encampmentData[actionY][actionX]; megurimasu.encam) s nl
@@ -1001,7 +1001,7 @@ bl (93    ) s (            var score = megurimasu.scoreData[actionY][actionX] + 
 bl (      ) s (reData[actionYTwo][actionXTwo]) s nl
 bl (94    ) s (            when\(megurimasu.encampmentData[actionY][actionX]\){) s nl
 bl (95    ) s (                0 -> { }) s nl
-bl (96    ) s (                getTeamID\(agentName\) -> score = 0) s nl
+bl (96    ) s (                util.getTeamID\(agentName\) -> score = 0) s nl
 bl (97    ) s (                else -> {score -= 3; _i += 10}) s nl
 bl (98    ) s (            }) s nl
 bl (99    ) s nl
@@ -1033,7 +1033,7 @@ cleanup
 3 startpage
 bl (119   ) s (}) s nl
 bl (120   ) s nl
-bl (121   ) s (fun strategyOfStalker\(megurimasu: MegurimasuSimulator, agentName: String, num: ) s nl
+bl (121   ) s (fun solver.strategyOfStalker\(megurimasu: MegurimasuSimulator, agentName: String, num: ) s nl
 bl (      ) s (Int\): List<Int>{) s nl
 bl (122   ) s (    // ) s kanji_init (B8:_$7$J$$%\(!<%8%'%s%H$NL>A0$,0z?t$GM?$\($i$l$?$H$-;~$OA4$F$,) ks (8) s ($N) ks (List) s ($rJV) ks nl
 bl (      ) s ($9) ks nl
@@ -1047,10 +1047,10 @@ bl (129   ) s (    val agent = megurimasu.agents[agentName]!!) s nl
 bl (130   ) s (    val enemyAgents = arrayOf\(megurimasu.agents["${enemyTeam}_1"]!!, megurimasu) s nl
 bl (      ) s (.agents["${enemyTeam}_2"]!!\)) s nl
 bl (131   ) s (    val minDistAgent = enemyAgents) s nl
-bl (132   ) s (            .minBy { calDist\(agent.x, agent.y, it.x, it.y\) }!!) s nl
+bl (132   ) s (            .minBy { util.calDist\(agent.x, agent.y, it.x, it.y\) }!!) s nl
 bl (133   ) s nl
 bl (134   ) s (    // ) s (0lHV6a$$%\(!<%8%'%s%H$K6a$E$/$?$a$N9TF0%?%$%W$rC5$9) ks nl
-bl (135   ) s (    val meAgentDegree = calDegree2Points\(agent.x, agent.y, minDistAgent.x, minD) s nl
+bl (135   ) s (    val meAgentDegree = util.calDegree2Points\(agent.x, agent.y, minDistAgent.x, minD) s nl
 bl (      ) s (istAgent.y\).toInt\(\)) s nl
 bl (136   ) s (    val optimalActionType = \(meAgentDegree % 360 / 45 + 2\) % 8) s nl
 bl (137   ) s nl
@@ -1065,13 +1065,13 @@ bl (145   ) s (    // ) s (E\(?XCO$@$C$?>l9g$O%Q%M%k=|5n$r9T$&$h$&$K) ks nl
 bl (146   ) s (    retList.forEachIndexed { idx, elem  ->) s nl
 bl (147   ) s (        val agentX = megurimasu.agents[agentName]!!.x) s nl
 bl (148   ) s (        val agentY = megurimasu.agents[agentName]!!.y) s nl
-bl (149   ) s (        val \(actionX, actionY\) = getActionPos\(agentX, agentY, elem\)) s nl
+bl (149   ) s (        val \(actionX, actionY\) = util.getActionPos\(agentX, agentY, elem\)) s nl
 bl (150   ) s nl
 bl (151   ) s (        // ) s (HO0O30) ks nl
 bl (152   ) s (        try { megurimasu.encampmentData[actionY][actionX]}) s nl
 bl (153   ) s (        catch \(e: IndexOutOfBoundsException\){ return@forEachIndexed }) s nl
 bl (154   ) s nl
-bl (155   ) s (        if\(!listOf\(0, getTeamID\(agentName\)\).contains\(megurimasu.encampmentData[) s nl
+bl (155   ) s (        if\(!listOf\(0, util.getTeamID\(agentName\)\).contains\(megurimasu.encampmentData[) s nl
 bl (      ) s (actionY][actionX]\)\){) s nl
 bl (156   ) s (            retList[idx] += 10) s nl
 bl (157   ) s (        }) s nl
@@ -1080,13 +1080,13 @@ bl (159   ) s nl
 bl (160   ) s (    return retList.take\(num\)) s nl
 bl (161   ) s (}) s nl
 bl (162   ) s nl
-bl (163   ) s (fun strategyOfPrayToGod\(num: Int\): List<Int>{) s nl
+bl (163   ) s (fun solver.strategyOfPrayToGod\(num: Int\): List<Int>{) s nl
 bl (164   ) s (    // ) s (%i%s%@%`$KCM$rA*Br$7$F) ks (List) s ($K5M$a$FJV$9) ks nl
 bl (165   ) s (    val retList = mutableListOf<Int>\(\)) s nl
 bl (166   ) s (    for\(i in 0 until num\){) s nl
 bl (167   ) s (        var randValue = 0) s nl
 bl (168   ) s (        do{) s nl
-bl (169   ) s (            randValue = random.nextInt\(8\) + random.nextInt\(2\) * 10) s nl
+bl (169   ) s (            randValue = solver.getRandom.nextInt\(8\) + solver.getRandom.nextInt\(2\) * 10) s nl
 bl (170   ) s (        }while\(retList.contains\(randValue\)\)) s nl
 bl (171   ) s nl
 bl (172   ) s (        retList.add\(randValue\)) s nl
@@ -1099,7 +1099,7 @@ endpage
 cleanup
 %%Page: 1 13
 /sheet 1 def
-(TCPConnectionManager.kt) setlabel
+(manager.TCPConnectionManager.kt) setlabel
 1 startpage
 bl (1     ) s (import com.sun.jdi.connect.spi.ClosedConnectionException) s nl
 bl (2     ) s (import java.io.BufferedReader) s nl
@@ -1108,7 +1108,7 @@ bl (4     ) s (import java.lang.Exception) s nl
 bl (5     ) s (import java.net.Socket) s nl
 bl (6     ) s (import kotlin.concurrent.thread) s nl
 bl (7     ) s nl
-bl (8     ) s (class TCPConnectionManager\(private val hostAddress: String, private val hostPor) s nl
+bl (8     ) s (class manager.TCPConnectionManager\(private val hostAddress: String, private val hostPor) s nl
 bl (      ) s (t: Int, private val receiver: \(String\) -> Unit\){) s nl
 bl (9     ) s nl
 bl (10    ) s (    var socket: Socket? = null) s nl
@@ -1169,16 +1169,16 @@ bl (1     ) s (import kotlin.math.PI) s nl
 bl (2     ) s (import kotlin.math.sqrt) s nl
 bl (3     ) s (import kotlin.math.atan2) s nl
 bl (4     ) s nl
-bl (5     ) s (fun getActionPos\(x: Int, y: Int, type: Int\): Pair<Int, Int>{) s nl
+bl (5     ) s (fun util.getActionPos\(x: Int, y: Int, type: Int\): Pair<Int, Int>{) s nl
 bl (6     ) s (    if\(type%10 !in 0..8 && type%10 !in 10..18\){ return Pair\(0, 0\) }) s nl
 bl (7     ) s nl
 bl (8     ) s (    return Pair\() s nl
-bl (9     ) s (            x + movementValues[type]!!["x"]!!,) s nl
-bl (10    ) s (            y + movementValues[type]!!["y"]!!) s nl
+bl (9     ) s (            x + util.getMovementValues[type]!!["x"]!!,) s nl
+bl (10    ) s (            y + util.getMovementValues[type]!!["y"]!!) s nl
 bl (11    ) s (    \)) s nl
 bl (12    ) s (}) s nl
 bl (13    ) s nl
-bl (14    ) s (fun getTeamID\(agentName: String\): Int{) s nl
+bl (14    ) s (fun util.getTeamID\(agentName: String\): Int{) s nl
 bl (15    ) s (    return when\(agentName\){) s nl
 bl (16    ) s (        "A_1", "A_2", "A" -> 1) s nl
 bl (17    ) s (        "B_1", "B_2", "B" -> 2) s nl
@@ -1186,11 +1186,11 @@ bl (18    ) s (        else -> 0) s nl
 bl (19    ) s (    }) s nl
 bl (20    ) s (}) s nl
 bl (21    ) s nl
-bl (22    ) s (fun calDist\(x: Int, y: Int, x_1: Int, y_1:Int\): Double{) s nl
+bl (22    ) s (fun util.calDist\(x: Int, y: Int, x_1: Int, y_1:Int\): Double{) s nl
 bl (23    ) s (    return sqrt\( \(\(x-x_1\) * \(x-x_1\) + \(y-y_1\) * \(y-y_1\)\).toDouble\(\) \)) s nl
 bl (24    ) s (}) s nl
 bl (25    ) s nl
-bl (26    ) s (fun calDegree2Points\(x: Double, y: Double, x_2: Double, y_2: Double\): Double{) s nl
+bl (26    ) s (fun util.calDegree2Points\(x: Double, y: Double, x_2: Double, y_2: Double\): Double{) s nl
 bl (27    ) s (    var degree = atan2\(y_2-y, x_2-x\) * 180 / PI) s nl
 bl (28    ) s (    if\(degree < 0\){) s nl
 bl (29    ) s (        degree += 360) s nl
@@ -1199,12 +1199,12 @@ bl (31    ) s nl
 bl (32    ) s (    return degree) s nl
 bl (33    ) s (}) s nl
 bl (34    ) s nl
-bl (35    ) s (fun calDegree2Points\(x: Int, y: Int, x_2: Int, y_2: Int\): Double{) s nl
-bl (36    ) s (    return calDegree2Points\(x.toDouble\(\), y.toDouble\(\), x_2.toDouble\(\), y_2.toD) s nl
+bl (35    ) s (fun util.calDegree2Points\(x: Int, y: Int, x_2: Int, y_2: Int\): Double{) s nl
+bl (36    ) s (    return util.calDegree2Points\(x.toDouble\(\), y.toDouble\(\), x_2.toDouble\(\), y_2.toD) s nl
 bl (      ) s (ouble\(\)\)) s nl
 bl (37    ) s (}) s nl
 bl (38    ) s nl
-bl (39    ) s (val movementValues = mapOf\() s nl
+bl (39    ) s (val util.getMovementValues = mapOf\() s nl
 bl (40    ) s (        8 to mapOf\("x" to 0,  "y" to 0\),) s nl
 bl (41    ) s (        0 to mapOf\("x" to 0,  "y" to -1\),) s nl
 bl (42    ) s (        1 to mapOf\("x" to 1,  "y" to -1\),) s nl

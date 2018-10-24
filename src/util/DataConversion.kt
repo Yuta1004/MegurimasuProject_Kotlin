@@ -1,3 +1,7 @@
+package util
+
+import MegurimasuSimulator
+
 class DataConversion {
     companion object {
         fun conversion(scoreData: Array<Array<Int>>, encampmentData: Array<Array<Int>>, agents: Map<String, MegurimasuSimulator.Agent>): String {

@@ -1,4 +1,4 @@
-# TCP通信管理クラス (TCPConnectionManager)
+# TCP通信管理クラス (manager.TCPConnectionManager)
 TCP通信の管理を行うクラス
 ソケットを開く，閉じる，データの受信を担う
 

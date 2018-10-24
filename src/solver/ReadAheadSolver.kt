@@ -1,3 +1,11 @@
+package solver
+
+import MegurimasuSimulator
+import util.QRParser
+import util.calDegree2Points
+import util.calDist
+import util.getActionPos
+import util.getTeamID
 import java.lang.IndexOutOfBoundsException
 import java.util.Random;
 import kotlin.math.max
@@ -68,12 +76,12 @@ fun searchBestBehavior(megurimasu: MegurimasuSimulator, depth: Int, probability:
     val agentsActionB = listOf("B_1", "B_2")
             .map{ agentName ->
                 val randBrute = random.nextInt(probability.sum())
-                val randStalker = probability.sum() - randBrute//random.nextInt(probability.sum() - randBrute)
+                val randStalker = probability.sum() - randBrute//solver.getRandom.nextInt(probability.sum() - randBrute)
 //                val randGod = probability.sum() - randBrute - randStalker
 
                 val bruteforce = strategyOfBruteForce(megurimasu, agentName, randBrute)
                 val stalker = strategyOfStalker(megurimasu, agentName, randStalker)
-//                val prayToGod = strategyOfPrayToGod(randGod)
+//                val prayToGod = solver.strategyOfPrayToGod(randGod)
 
                 agentName to bruteforce + stalker //+ prayToGod
             }

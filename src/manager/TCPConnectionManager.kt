@@ -1,3 +1,5 @@
+package manager
+
 import com.sun.jdi.connect.spi.ClosedConnectionException
 import java.io.BufferedReader
 import java.io.InputStreamReader
