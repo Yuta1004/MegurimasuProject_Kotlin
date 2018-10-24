@@ -89,7 +89,7 @@ fun tcpReceiver(text: String) {
             return
         }
         "reconnect" -> {
-            writeLog("スマートフォンに接続できません．3秒後に再接続を試みます")
+            writeLog("スマートフォンに接続できません．2秒後に再接続を試みます")
             return
         }
         "open" -> {

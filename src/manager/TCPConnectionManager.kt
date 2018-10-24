@@ -35,7 +35,7 @@ class TCPConnectionManager(private val hostAddress: String, private val hostPort
 
     private fun connect(){
         while(!initSocket()){
-            Thread.sleep(3000)
+            Thread.sleep(2000)
             receiver("reconnect")
         }
 
