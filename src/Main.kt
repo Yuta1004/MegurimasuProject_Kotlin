@@ -54,9 +54,15 @@ fun main(args: Array<String>){
     while(doLoop){
         // 次の手を探索
         val (maxScore, bestBehavior) = getNextBehavior()
-        writeLog(if(manualControl) "探索が終了しました" else "入力を受け付けました")
-        writeLog("盤面評価値：$maxScore")
-        megurimasuGUI!!.viewBestBehavior(bestBehavior)
+
+        // メッセージ出力
+        if(manualControl){
+            writeLog("入力を受け付けました")
+        }else {
+            writeLog("探索が終了しました…")
+            writeLog("盤面評価値：$maxScore")
+            megurimasuGUI!!.viewBestBehavior(bestBehavior)
+        }
 
         // 相手の行動が入力されるのを待機
         writeLog("相手エージェントの行動をアプリで入力してください")
@@ -82,7 +88,6 @@ fun getNextBehavior(): Pair<Int, Map<String, Int>>{
     // マニュアルモードなら
     if(manualControl){
         // 入力されるまで待機
-        writeLog("＊＊＊システムはマニュアルモードになっています＊＊＊")
         writeLog("自チームの行動情報を入力してください")
         manualActionData = "Waiting"
         while(manualActionData == "Waiting"){ Thread.sleep(5) }
@@ -131,6 +136,14 @@ fun tcpReceiver(text: String) {
         "OpponentPos" ->{
             if(posData != "Waiting"){ return }
             posData = data
+        }
+        "ManualActionData" -> {
+            if(manualActionData != "Waiting"){ return }
+            manualActionData = data
+        }
+        "SwitchControl" -> {
+            if(data == "Manual"){ manualControl = true; writeLog("＊＊＊モードが「マニュアル」になりました＊＊＊") }
+            else if(data == "AI"){ manualControl = false; writeLog("＊＊＊モードが「オート」になりました＊＊＊") }
         }
     }
 }
