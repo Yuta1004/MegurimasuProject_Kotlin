@@ -181,6 +181,12 @@ class ViewBestBehavior(private val bestBehavior: Map<String, Int>): JFrame(), Ke
         val (a2BehaviorX, a2BehaviorY) = getDrawCenterPos(graphics, a2Behavior, 450, 300)
         graphics.drawString(a2Behavior, a2BehaviorX, a2BehaviorY)
 
+        // ENTERを押すとウィンドウ閉じれるよ！
+        val pleaseEntermes = "ENTERを押してウィンドウを閉じてください"
+        graphics.font = Font("Selif", 10, 20)
+        val (pleaseEnterX, pleaseEnterY) = getDrawCenterPos(graphics, pleaseEntermes, 300, 450)
+        graphics.drawString(pleaseEntermes, pleaseEnterX, pleaseEnterY)
+
         revalidate()
         repaint()
     }
