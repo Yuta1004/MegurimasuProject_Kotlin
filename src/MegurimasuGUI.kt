@@ -1,4 +1,6 @@
 import java.awt.*
+import java.awt.event.KeyEvent
+import java.awt.event.KeyListener
 import java.text.SimpleDateFormat
 import java.util.*
 import javax.swing.*
@@ -137,7 +139,7 @@ class MegurimasuGUI(var megurimasu: MegurimasuSimulator) : JFrame() {
 
 }
 
-class ViewBestBehavior(private val bestBehavior: Map<String, Int>): JFrame(){
+class ViewBestBehavior(private val bestBehavior: Map<String, Int>): JFrame(), KeyListener{
     var bufImage: Image? = null
 
     init{
@@ -146,12 +148,13 @@ class ViewBestBehavior(private val bestBehavior: Map<String, Int>): JFrame(){
         title = "探索結果"
         defaultCloseOperation = JFrame.DISPOSE_ON_CLOSE
         isVisible = true
+        addKeyListener(this)
 
         viewBestBehavior(bestBehavior)
     }
 
     // 最善手表示
-    fun viewBestBehavior(bestBehavior: Map<String, Int>){
+    private fun viewBestBehavior(bestBehavior: Map<String, Int>){
         bufImage = createImage(600, 600)
 
         val graphics = bufImage!!.graphics as Graphics2D
@@ -180,6 +183,16 @@ class ViewBestBehavior(private val bestBehavior: Map<String, Int>): JFrame(){
 
         revalidate()
         repaint()
+    }
+
+    // キー入力
+    override fun keyReleased(e: KeyEvent?) {}
+    override fun keyTyped(e: KeyEvent?) {}
+    override fun keyPressed(e: KeyEvent?) {
+        if(e?.keyCode == KeyEvent.VK_ENTER){
+            isVisible = false
+            dispose()
+        }
     }
 
     // 画面更新時に呼ばれる
