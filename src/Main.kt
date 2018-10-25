@@ -1,6 +1,7 @@
 import manager.TCPConnectionManager
 import solver.searchBestBehavior
 import util.QRParser
+import kotlin.concurrent.thread
 
 var qrData = "Waiting"
 var manualActionData = "Waiting"
@@ -62,8 +63,8 @@ fun main(args: Array<String>){
         }else {
             writeLog("探索が終了しました…")
             writeLog("盤面評価値：$maxScore")
-            megurimasuGUI!!.viewBestBehavior(bestBehavior)
         }
+        megurimasuGUI!!.viewBestBehavior(bestBehavior)
 
         // 相手の行動が入力されるのを待機
         writeLog("相手エージェントの行動をアプリで入力してください")
@@ -124,7 +125,9 @@ fun tcpReceiver(text: String) {
         }
         "open" -> {
             // 設定内容をスマートフォンに送信
-            tcpConnectionManager.sendData("Setting@AI:$depth:${strategyProbab[0]}:${strategyProbab[1]}:${strategyProbab[2]}")
+            thread {
+                tcpConnectionManager.sendData("Setting@AI:$depth:${strategyProbab[0]}:${strategyProbab[1]}:${strategyProbab[2]}")
+            }
             writeLog("スマートフォンが接続されました")
             return
         }
