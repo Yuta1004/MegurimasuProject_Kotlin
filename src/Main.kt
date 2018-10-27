@@ -83,6 +83,9 @@ fun main(args: Array<String>){
         )
         megurimasu!!.action(behavior)
         megurimasuGUI!!.updateBoard(megurimasu!!)
+
+        val score = megurimasu!!.calScore()
+        println("自チーム ${score["A"]} vs ${score["B"]} 相手チーム")
     }
 }
 
