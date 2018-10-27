@@ -86,15 +86,30 @@ class MegurimasuGUI(var megurimasu: MegurimasuSimulator) : JFrame() {
         graphics.font = Font("Selif", 10, 30)
         val (drawX, drawY) = getDrawCenterPos(graphics, scoreStr, 300, 700)
         graphics.drawString(scoreStr, drawX, drawY)
+
+        // エージェント1を強調表示
+        megurimasu.agents
+                .filter { "1" in it.key }
+                .forEach { _, pos ->
+                    drawAgentOneBold(graphics, pos.x, pos.y)
+                }
+
     }
 
     // 陣地描画
     private fun drawEncampment(g: Graphics2D, x: Int, y: Int){
         g.color = Color.BLACK
-        g.stroke = BasicStroke(5f)
+        g.stroke = BasicStroke(3f)
         g.drawRect(50 * x + 10, 50 * y + 30, 50, 50)
         g.color = getEncampmentColor(x, y)
         g.fillRect(50 * x + 10, 50 * y + 30, 50, 50)
+    }
+
+    // エージェント強調表示
+    private fun drawAgentOneBold(g: Graphics2D, x: Int, y: Int){
+        g.color = Color.WHITE
+        g.stroke = BasicStroke(5f)
+        g.drawRect(50 * x + 15, 50 * y + 35, 37, 37)
     }
 
     // スコア描画
