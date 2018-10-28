@@ -145,13 +145,14 @@ fun strategyOfBruteForce(megurimasu: MegurimasuSimulator, agentName: String, num
                     score = (score * (max(random.nextFloat()-0.3, 0.4) + 1)).toInt()
                 }
                 getTeamID(agentName) -> {
-                    random.nextFloat() * -15
+                    (random.nextFloat() + 2) * -6
                 }
                 else -> {
-                    score = (score * (max(random.nextFloat()-0.6, 0.2) + 1)).toInt()
+                    score = (score * max(random.nextFloat()+0.0, 0.83)).toInt()
                     _i += 10
                 }
             }
+
 
             // 最大値更新
             if(maxValue[0] < score){
